@@ -1,0 +1,51 @@
+_format_version: "3.0"
+
+services:
+  - name: user-service
+    url: http://host.docker.internal:8081
+    routes:
+      - name: user-routes
+        paths:
+          - /api/users
+        strip_path: false
+
+  - name: catalog-service
+    url: http://host.docker.internal:8082
+    routes:
+      - name: catalog-routes
+        paths:
+          - /api/products
+          - /api/categories
+        strip_path: false
+
+  - name: cart-service
+    url: http://host.docker.internal:8083
+    routes:
+      - name: cart-routes
+        paths:
+          - /api/cart
+        strip_path: false
+
+  - name: order-service
+    url: http://host.docker.internal:8084
+    routes:
+      - name: order-routes
+        paths:
+          - /api/orders
+        strip_path: false
+
+  - name: payment-service
+    url: http://host.docker.internal:8085
+    routes:
+      - name: payment-routes
+        paths:
+          - /api/payments
+        strip_path: false
+
+  - name: admin-service
+    url: http://host.docker.internal:8087
+    routes:
+      - name: admin-routes
+        paths:
+          - /admin
+        strip_path: false
