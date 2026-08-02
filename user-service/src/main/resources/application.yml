@@ -5,7 +5,7 @@ spring:
   application:
     name: user-service
   datasource:
-    url: jdbc:mysql://${USER_DB_HOST:localhost}:${USER_DB_PORT:3307}/user_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://${USER_DB_HOST:127.0.0.1}:${USER_DB_PORT:3307}/user_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
     username: ${USER_DB_USER:ecommerce}
     password: ${USER_DB_PASSWORD:ecommerce}
   jpa:
