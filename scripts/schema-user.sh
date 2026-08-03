@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
-# Loads scripts/seed-users.sql into user_db. NOT a Flyway migration.
-# Usage: ./scripts/seed-users.sh
-#
-# Password for all 1000 users: password123
+# Applies scripts/schema-user.sql to user_db.
+# Usage: ./scripts/schema-user.sh
 
 set -euo pipefail
 
@@ -14,10 +12,10 @@ DB_PORT="${USER_DB_PORT:-3307}"
 DB_NAME="${USER_DB_NAME:-user_db}"
 DB_USER="${USER_DB_USER:-ecommerce}"
 DB_PASSWORD="${USER_DB_PASSWORD:-ecommerce}"
-SQL_FILE="${ROOT_DIR}/scripts/seed-users.sql"
+SCHEMA_FILE="${ROOT_DIR}/scripts/schema-user.sql"
 
-if [[ ! -f "$SQL_FILE" ]]; then
-  echo "Missing ${SQL_FILE}"
+if [[ ! -f "$SCHEMA_FILE" ]]; then
+  echo "Missing ${SCHEMA_FILE}"
   exit 1
 fi
 
@@ -36,11 +34,6 @@ run_mysql() {
   fi
 }
 
-"${ROOT_DIR}/scripts/schema-user.sh"
-
-echo "Loading 1000 users from scripts/seed-users.sql ..."
-run_mysql < "$SQL_FILE"
-
-echo "Done."
-echo "  manojprabhakar1312@gmail.com  / password123"
-echo "  manojguru1961999@gmail.com    / password123"
+echo "Applying user_db schema from scripts/schema-user.sql ..."
+run_mysql < "$SCHEMA_FILE"
+echo "user_db schema ready."
