@@ -1,5 +1,24 @@
 server:
   port: 8082
+
 spring:
   application:
     name: catalog-service
+  datasource:
+    url: jdbc:mysql://${CATALOG_DB_HOST:127.0.0.1}:${CATALOG_DB_PORT:3308}/catalog_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${CATALOG_DB_USER:ecommerce}
+    password: ${CATALOG_DB_PASSWORD:ecommerce}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: false
+  elasticsearch:
+    uris: ${ELASTICSEARCH_URIS:http://127.0.0.1:9200}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
