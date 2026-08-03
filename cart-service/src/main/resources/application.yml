@@ -1,5 +1,26 @@
 server:
   port: 8083
+
 spring:
   application:
     name: cart-service
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://127.0.0.1:27017/cart_db}
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-me-to-a-256-bit-secret-key-for-local-dev-only!!}
+  cart:
+    cache-ttl-seconds: ${CART_CACHE_TTL_SECONDS:900}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
