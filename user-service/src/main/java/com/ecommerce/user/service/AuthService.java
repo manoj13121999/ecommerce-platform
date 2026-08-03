@@ -3,6 +3,7 @@ package com.ecommerce.user.service;
 import com.ecommerce.common.event.KafkaTopics;
 import com.ecommerce.common.event.UserRegisteredEvent;
 import com.ecommerce.user.dto.AuthResponse;
+import com.ecommerce.user.dto.ChangePasswordRequest;
 import com.ecommerce.user.dto.ForgotPasswordRequest;
 import com.ecommerce.user.dto.LoginRequest;
 import com.ecommerce.user.dto.RegisterRequest;
@@ -101,6 +102,17 @@ public class AuthService {
         user.setLastName(request.lastName());
         user.setPhone(request.phone());
         return toUserResponse(userRepository.save(user));
+    }
+
+    @Transactional
+    public Map<String, String> changePassword(User user, ChangePasswordRequest request) {
+        if (!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Current password is incorrect");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
+        userRepository.save(user);
+        return Map.of("message", "Password changed successfully");
     }
 
     @Transactional
