@@ -1,0 +1,48 @@
+.deals-page {
+  padding-bottom: 4rem;
+}
+
+.deals-hero {
+  padding: 2.5rem 0;
+  background: linear-gradient(135deg, #fff7ed, #fef3c7);
+  border-bottom: 1px solid #fde68a;
+}
+
+.deals-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.75rem;
+  color: #b45309;
+  font-weight: 700;
+}
+
+.deals-hero h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+}
+
+.deals-hero p {
+  margin: 0;
+  color: var(--color-text-muted);
+  max-width: 40rem;
+}
+
+.deals-content {
+  padding-top: 2rem;
+}
+
+.deals-empty {
+  padding: 3rem;
+  text-align: center;
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+}
+
+.deals-empty code {
+  background: #f1f5f9;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}

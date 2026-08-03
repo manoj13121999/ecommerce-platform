@@ -218,6 +218,16 @@ img {
   border: 1px solid #fecaca;
 }
 
+.form-success {
+  margin-top: 0.75rem;
+  padding: 0.75rem 0.875rem;
+  border-radius: var(--radius-sm);
+  background: #ecfdf5;
+  color: var(--color-success);
+  font-size: 0.875rem;
+  border: 1px solid #bbf7d0;
+}
+
 .form-footer {
   margin-top: 1.25rem;
   text-align: center;

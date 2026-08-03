@@ -49,6 +49,12 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, []);
 
+  const updateProfile = useCallback(async (payload) => {
+    const profile = await authApi.updateProfile(payload);
+    setUser(profile);
+    return profile;
+  }, []);
+
   const value = useMemo(
     () => ({
       user,
@@ -57,9 +63,10 @@ export function AuthProvider({ children }) {
       login,
       register,
       logout,
+      updateProfile,
       refreshUser: loadUser,
     }),
-    [user, loading, login, register, logout, loadUser],
+    [user, loading, login, register, logout, updateProfile, loadUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

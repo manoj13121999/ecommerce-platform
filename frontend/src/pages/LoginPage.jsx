@@ -80,9 +80,12 @@ export default function LoginPage() {
 
             {error && <div className="form-error">{error}</div>}
 
-            <div className="form-footer">
-              No account? <Link to="/register">Create one</Link>
-            </div>
+              <div className="form-footer">
+                No account? <Link to="/register">Create one</Link>
+              </div>
+              <div className="form-footer">
+                <Link to="/forgot-password">Forgot password?</Link>
+              </div>
           </div>
         </div>
       </div>

@@ -1,47 +1,51 @@
 import { Link } from 'react-router-dom';
-import {
-  ArrowRight,
-  Headphones,
-  ShieldCheck,
-  Sparkles,
-  Truck,
-  Zap,
-} from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { catalogApi } from '../api/client';
 import { useAuth } from '../context/AuthContext';
+import ProductCard from '../components/ProductCard';
+import ProductCardSkeleton from '../components/ProductCardSkeleton';
 import './HomePage.css';
-
-const categories = [
-  { name: 'Electronics', count: '120+ items', className: 'category-electronics' },
-  { name: 'Fashion', count: '340+ items', className: 'category-fashion' },
-  { name: 'Home & Living', count: '85+ items', className: 'category-home' },
-  { name: 'Sports', count: '64+ items', className: 'category-sports' },
-];
 
 const features = [
   {
-    icon: Truck,
     title: 'Fast delivery',
     text: 'Express shipping on eligible orders with real-time tracking.',
   },
   {
-    icon: ShieldCheck,
     title: 'Secure payments',
     text: 'Stripe-powered checkout with encrypted transactions.',
   },
   {
-    icon: Headphones,
-    title: '24/7 support',
-    text: 'Dedicated help for orders, returns, and account issues.',
+    title: 'Smart search',
+    text: 'Elasticsearch-powered product discovery across 5000+ items.',
   },
   {
-    icon: Zap,
-    title: 'Microservices powered',
-    text: 'Built on Spring Boot, Kafka, Redis, and Elasticsearch.',
+    title: 'Microservices',
+    text: 'Spring Boot, Kafka, Redis, MongoDB, and Elasticsearch.',
   },
 ];
 
 export default function HomePage() {
   const { isAuthenticated, user } = useAuth();
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loadingFeatured, setLoadingFeatured] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      catalogApi.getProducts({ page: 0, size: 8, sort: 'newest' }),
+      catalogApi.getCategories(),
+    ])
+      .then(([productsPage, categoryList]) => {
+        setFeaturedProducts(productsPage.content);
+        setCategories(categoryList.slice(0, 4));
+      })
+      .catch(() => {})
+      .finally(() => setLoadingFeatured(false));
+  }, []);
+
+  const heroProduct = featuredProducts[0];
 
   return (
     <div className="home-page">
@@ -50,7 +54,7 @@ export default function HomePage() {
           <div className="hero-copy">
             <span className="hero-badge">
               <Sparkles size={16} />
-              Phase 1 live — Auth & storefront ready
+              Phase 2 live — Catalog + Elasticsearch
             </span>
             <h1>
               Shop smarter with
@@ -79,19 +83,27 @@ export default function HomePage() {
           </div>
 
           <div className="hero-visual">
-            <div className="hero-card hero-card-main">
-              <span className="hero-card-label">Trending now</span>
-              <h3>Premium wireless headphones</h3>
-              <p className="hero-price">₹4,999</p>
-              <div className="hero-card-shine" />
-            </div>
+            {heroProduct ? (
+              <div className="hero-card hero-card-main hero-card-product">
+                <img src={heroProduct.imageUrl} alt={heroProduct.name} />
+                <div className="hero-card-product-info">
+                  <span className="hero-card-label">Featured product</span>
+                  <h3>{heroProduct.name}</h3>
+                </div>
+              </div>
+            ) : (
+              <div className="hero-card hero-card-main">
+                <span className="hero-card-label">Trending now</span>
+                <h3>Explore our catalog</h3>
+              </div>
+            )}
             <div className="hero-card hero-card-secondary">
-              <span>Free shipping</span>
-              <strong>On orders ₹999+</strong>
+              <span>Catalog size</span>
+              <strong>5000+ products</strong>
             </div>
             <div className="hero-stat">
-              <strong>1000+</strong>
-              <span>Happy users seeded</span>
+              <strong>50</strong>
+              <span>Categories live</span>
             </div>
           </div>
         </div>
@@ -99,16 +111,19 @@ export default function HomePage() {
 
       <section className="section">
         <div className="container">
-          <div className="section-header">
-            <h2>Shop by category</h2>
-            <p>Catalog integration coming in Phase 2 — preview the storefront layout now.</p>
+          <div className="section-header section-header-row">
+            <div>
+              <h2>Featured products</h2>
+              <p>Fresh picks from the catalog service — updated in real time.</p>
+            </div>
+            <Link to="/shop" className="btn btn-secondary btn-sm">View all</Link>
           </div>
-          <div className="card-grid">
-            {categories.map((category) => (
-              <Link key={category.name} to="/shop" className={`category-card ${category.className}`}>
-                <h3>{category.name}</h3>
-                <span>{category.count}</span>
-              </Link>
+          <div className="product-grid home-product-grid">
+            {loadingFeatured && Array.from({ length: 8 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+            {!loadingFeatured && featuredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </div>
@@ -117,32 +132,38 @@ export default function HomePage() {
       <section className="section section-muted">
         <div className="container">
           <div className="section-header">
-            <h2>Why ShopVault?</h2>
-            <p>Enterprise-grade ecommerce patterns, built for your portfolio and interviews.</p>
+            <h2>Shop by category</h2>
+            <p>Explore top categories from the live catalog.</p>
           </div>
           <div className="card-grid">
-            {features.map(({ icon: Icon, title, text }) => (
-              <article key={title} className="feature-card">
-                <div className="feature-card-icon">
-                  <Icon size={22} />
-                </div>
-                <h3>{title}</h3>
-                <p>{text}</p>
-              </article>
+            {categories.map((category, index) => (
+              <Link
+                key={category.id}
+                to={`/shop?category=${category.id}`}
+                className={`category-card category-theme-${index % 4}`}
+              >
+                <h3>{category.name}</h3>
+                <span>{category.productCount} products</span>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="cta-banner">
-        <div className="container cta-inner">
-          <div>
-            <h2>Ready to build the full flow?</h2>
-            <p>Catalog, cart, checkout, and payments are next on the roadmap.</p>
+      <section className="section">
+        <div className="container">
+          <div className="section-header">
+            <h2>Why ShopVault?</h2>
+            <p>Enterprise-grade ecommerce patterns, built for your portfolio and interviews.</p>
           </div>
-          <Link to="/register" className="btn btn-primary btn-lg">
-            Get started free
-          </Link>
+          <div className="card-grid">
+            {features.map(({ title, text }) => (
+              <article key={title} className="feature-card">
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
     </div>

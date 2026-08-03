@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import {
   Heart,
   LogOut,
@@ -9,15 +9,29 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import './Header.css';
 
 export default function Header() {
+  const navigate = useNavigate();
   const { user, isAuthenticated, logout, loading } = useAuth();
+  const { itemCount } = useCart();
+  const { count: wishlistCount } = useWishlist();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const initials = user
     ? `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase()
     : '';
+
+  function handleSearchSubmit(event) {
+    event.preventDefault();
+    const query = searchQuery.trim();
+    if (!query) return;
+    navigate(`/shop?q=${encodeURIComponent(query)}`);
+    setMobileOpen(false);
+  }
 
   return (
     <header className="site-header">
@@ -39,41 +53,55 @@ export default function Header() {
           </NavLink>
         </nav>
 
-        <div className="header-search">
+        <form className="header-search" onSubmit={handleSearchSubmit}>
           <Search size={18} />
-          <input type="search" placeholder="Search products..." aria-label="Search products" />
-        </div>
+          <input
+            type="search"
+            placeholder="Search products..."
+            aria-label="Search products"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </form>
 
         <div className="header-actions">
-          <button type="button" className="icon-btn" aria-label="Wishlist">
-            <Heart size={20} />
-          </button>
+          {isAuthenticated && (
+            <Link to="/account" className="icon-btn wishlist-link" aria-label="Wishlist">
+              <Heart size={20} />
+              {wishlistCount > 0 && <span className="cart-badge">{wishlistCount}</span>}
+            </Link>
+          )}
 
           <button type="button" className="icon-btn cart-btn" aria-label="Cart">
             <ShoppingBag size={20} />
-            <span className="cart-badge">0</span>
+            {itemCount > 0 && <span className="cart-badge">{itemCount}</span>}
           </button>
 
           {!loading && isAuthenticated ? (
-            <div className="user-menu">
+            <Link to="/account" className="user-menu" onClick={() => setMobileOpen(false)}>
               <div className="user-avatar">{initials}</div>
               <div className="user-meta">
                 <span className="user-name">{user.firstName}</span>
                 <span className="user-email">{user.email}</span>
               </div>
-              <button type="button" className="icon-btn" onClick={logout} aria-label="Logout">
-                <LogOut size={18} />
-              </button>
-            </div>
+            </Link>
           ) : (
-            <div className="auth-links">
-              <Link to="/login" className="btn btn-ghost btn-sm">
-                Login
-              </Link>
-              <Link to="/register" className="btn btn-primary btn-sm">
-                Sign up
-              </Link>
-            </div>
+            !loading && (
+              <div className="auth-links">
+                <Link to="/login" className="btn btn-ghost btn-sm">
+                  Login
+                </Link>
+                <Link to="/register" className="btn btn-primary btn-sm">
+                  Sign up
+                </Link>
+              </div>
+            )
+          )}
+
+          {isAuthenticated && (
+            <button type="button" className="icon-btn" onClick={logout} aria-label="Logout">
+              <LogOut size={18} />
+            </button>
           )}
 
           <button

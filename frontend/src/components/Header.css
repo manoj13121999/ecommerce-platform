@@ -144,6 +144,14 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
   background: white;
+  text-decoration: none;
+  color: inherit;
+}
+
+.wishlist-link {
+  position: relative;
+  text-decoration: none;
+  color: inherit;
 }
 
 .user-avatar {

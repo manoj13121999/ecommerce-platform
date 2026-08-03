@@ -1,0 +1,110 @@
+.account-page {
+  padding: 2rem 0 4rem;
+}
+
+.account-state {
+  padding: 4rem 0;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.account-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.account-header h1 {
+  margin: 0 0 0.35rem;
+}
+
+.account-header p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.account-role {
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.account-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.account-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.5rem;
+}
+
+.account-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.75rem 0.85rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+
+.account-tabs button.active,
+.account-tabs button:hover {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.account-card {
+  padding: 1.5rem;
+}
+
+.account-card h2 {
+  margin: 0 0 1.25rem;
+  font-size: 1.25rem;
+}
+
+.account-empty {
+  color: var(--color-text-muted);
+}
+
+.account-product-grid {
+  margin-top: 0.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .account-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .account-tabs {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
