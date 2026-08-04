@@ -1,16 +1,25 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Heart, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, Heart, RotateCcw, ShieldCheck, ShoppingBag, Truck } from 'lucide-react';
 import { catalogApi } from '../api/client';
 import ProductCard from '../components/ProductCard';
+import ProductCardSkeleton from '../components/ProductCardSkeleton';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { formatPrice } from '../utils/formatPrice';
+import { productImageFallback, resolveProductImage } from '../utils/productImages';
 import './ProductDetailPage.css';
 
 function isOnSale(product) {
   return product?.compareAtPrice != null && Number(product.compareAtPrice) > Number(product.price);
+}
+
+function discountPercent(product) {
+  if (!isOnSale(product)) return 0;
+  const original = Number(product.compareAtPrice);
+  const current = Number(product.price);
+  return Math.round(((original - current) / original) * 100);
 }
 
 export default function ProductDetailPage() {
@@ -27,6 +36,7 @@ export default function ProductDetailPage() {
   const [wishlistBusy, setWishlistBusy] = useState(false);
   const [cartMessage, setCartMessage] = useState('');
   const [wishlistMessage, setWishlistMessage] = useState('');
+  const [imageSrc, setImageSrc] = useState('');
 
   useEffect(() => {
     setLoading(true);
@@ -37,6 +47,7 @@ export default function ProductDetailPage() {
     ])
       .then(([productData, related]) => {
         setProduct(productData);
+        setImageSrc(resolveProductImage(productData));
         setRelatedProducts(related);
       })
       .catch((err) => setError(err.message || 'Product not found'))
@@ -53,7 +64,7 @@ export default function ProductDetailPage() {
     setCartMessage('');
     try {
       await addToCart(product, 1);
-      setCartMessage('Added to cart');
+      setCartMessage('Added to your cart');
     } catch (err) {
       setCartMessage(err.message || 'Could not add to cart');
     } finally {
@@ -80,7 +91,14 @@ export default function ProductDetailPage() {
   }
 
   if (loading) {
-    return <div className="container product-detail-state">Loading product...</div>;
+    return (
+      <div className="container product-detail-page">
+        <div className="product-detail-grid product-detail-loading">
+          <ProductCardSkeleton />
+          <div className="detail-skeleton-panel" />
+        </div>
+      </div>
+    );
   }
 
   if (error || !product) {
@@ -103,30 +121,53 @@ export default function ProductDetailPage() {
       </Link>
 
       <div className="product-detail-grid">
-        <div className="product-detail-image">
-          <img src={product.imageUrl} alt={product.name} />
-          {onSale && <span className="detail-sale-badge">On sale</span>}
+        <div className="product-detail-gallery">
+          <div className="product-detail-image">
+            <img
+              src={imageSrc}
+              alt={product.name}
+              onError={() => setImageSrc((current) => {
+                const fallback = productImageFallback(product.categoryName, product.categoryId);
+                return current === fallback ? current : fallback;
+              })}
+            />
+            {onSale && (
+              <span className="detail-sale-badge">-{discountPercent(product)}% off</span>
+            )}
+          </div>
         </div>
 
         <div className="product-detail-info">
           <span className="detail-category">{product.categoryName}</span>
           <h1>{product.name}</h1>
+
           <div className="detail-price-row">
             <p className="detail-price">{formatPrice(product.price)}</p>
             {onSale && (
               <p className="detail-compare-price">{formatPrice(product.compareAtPrice)}</p>
             )}
           </div>
+
           <p className="detail-description">{product.description}</p>
 
           <div className="detail-meta">
-            <span>{product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}</span>
+            {product.stock > 0 ? (
+              <span className="detail-stock in-stock">In stock · {product.stock} available</span>
+            ) : (
+              <span className="detail-stock out-of-stock">Currently unavailable</span>
+            )}
+          </div>
+
+          <div className="detail-trust">
+            <span><Truck size={16} /> Free delivery over ₹999</span>
+            <span><RotateCcw size={16} /> 7-day returns</span>
+            <span><ShieldCheck size={16} /> Secure checkout</span>
           </div>
 
           <div className="detail-actions">
             <button
               type="button"
-              className="btn btn-primary btn-lg"
+              className="btn btn-primary btn-lg detail-add-btn"
               disabled={product.stock <= 0 || adding}
               onClick={handleAddToCart}
             >
@@ -140,9 +181,10 @@ export default function ProductDetailPage() {
               onClick={handleToggleWishlist}
             >
               <Heart size={18} fill={wishlisted ? 'currentColor' : 'none'} />
-              {wishlisted ? 'Saved' : 'Save'}
+              {wishlisted ? 'Saved' : 'Save item'}
             </button>
           </div>
+
           {cartMessage && <p className="detail-cart-message">{cartMessage}</p>}
           {wishlistMessage && <p className="detail-wishlist-message">{wishlistMessage}</p>}
         </div>

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Loads scripts/seed-catalog.sql into catalog_db. NOT a Flyway migration.
 # Usage: ./scripts/seed-catalog.sh
+# Regenerate seed: python3 scripts/generate-catalog-seed.py
 # Restart catalog-service after seeding to re-index Elasticsearch.
 
 set -euo pipefail

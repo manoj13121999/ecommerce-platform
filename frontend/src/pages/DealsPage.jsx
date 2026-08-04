@@ -37,13 +37,12 @@ export default function DealsPage() {
       <section className="deals-hero">
         <div className="container">
           <div className="deals-hero-badge">
-            <Tags size={18} />
-            Limited-time savings
+            <Tags size={16} />
+            Limited-time offers
           </div>
-          <h1>Today&apos;s deals</h1>
+          <h1>Today&apos;s best deals</h1>
           <p>
-            Products with compare-at pricing — {totalElements.toLocaleString()} items on sale
-            across the catalog.
+            Products with special pricing — save on top brands across every category.
           </p>
         </div>
       </section>

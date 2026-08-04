@@ -1,0 +1,213 @@
+.shopvault-home {
+  background: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', sans-serif;
+  color: #1d1d1f;
+}
+
+.shopvault-hero {
+  text-align: center;
+  padding: 3.25rem 1.5rem 3.5rem;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.shopvault-eyebrow {
+  margin: 0 0 0.65rem;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: #6e6e73;
+  letter-spacing: -0.01em;
+}
+
+.shopvault-hero h1 {
+  margin: 0 0 0.85rem;
+  font-size: clamp(2.5rem, 5.5vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+.shopvault-subtitle {
+  margin: 0 auto;
+  max-width: 28rem;
+  font-size: clamp(1.0625rem, 2vw, 1.3125rem);
+  line-height: 1.4;
+  font-weight: 400;
+  color: #6e6e73;
+  letter-spacing: -0.01em;
+}
+
+.shopvault-hero-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 1.1rem;
+}
+
+.shopvault-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  color: #0066cc;
+  font-size: 1.0625rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.shopvault-link:hover {
+  text-decoration: underline;
+}
+
+.shopvault-feature-strip {
+  background: #000;
+  padding: 0.75rem 0.75rem 0.85rem;
+}
+
+.shopvault-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  max-width: 1260px;
+  margin: 0 auto;
+}
+
+.shopvault-feature-tile {
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  color: #f5f5f7;
+  overflow: hidden;
+}
+
+.shopvault-feature-tile:hover {
+  opacity: 0.92;
+}
+
+.shopvault-feature-image {
+  aspect-ratio: 16 / 10;
+  background: #1d1d1f;
+  overflow: hidden;
+}
+
+.shopvault-feature-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.shopvault-feature-copy {
+  padding: 1.35rem 1rem 1.5rem;
+  text-align: center;
+}
+
+.shopvault-feature-copy h2 {
+  margin: 0 0 0.4rem;
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.shopvault-feature-copy p {
+  margin: 0 auto 0.75rem;
+  max-width: 16rem;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: rgba(245, 245, 247, 0.72);
+}
+
+.shopvault-feature-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1rem;
+  color: #2997ff;
+  font-size: 1.0625rem;
+  font-weight: 400;
+}
+
+.shopvault-latest {
+  background: #f5f5f7;
+  padding: 2.75rem 0 3rem;
+}
+
+.shopvault-latest-inner {
+  width: min(1260px, calc(100% - 1.5rem));
+  margin-inline: auto;
+}
+
+.shopvault-latest-inner h2 {
+  margin: 0 0 1.35rem;
+  padding-left: 0.25rem;
+  font-size: clamp(1.5rem, 3vw, 1.75rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #1d1d1f;
+}
+
+.shopvault-product-rail {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.shopvault-product-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.shopvault-rail-skeleton {
+  flex: 0 0 280px;
+  height: 360px;
+  border-radius: 18px;
+  background: linear-gradient(90deg, #ececee 25%, #e0e0e5 50%, #ececee 75%);
+  background-size: 200% 100%;
+  animation: shopvault-shimmer 1.2s infinite;
+}
+
+.shopvault-help-strip {
+  background: #fff;
+  padding: 2rem 0 2.5rem;
+  border-top: 1px solid #d2d2d7;
+}
+
+.shopvault-help-inner {
+  width: min(980px, calc(100% - 2rem));
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.shopvault-help-card h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.3125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+@keyframes shopvault-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (max-width: 900px) {
+  .shopvault-feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shopvault-help-inner {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .shopvault-hero {
+    padding-top: 2.25rem;
+  }
+}

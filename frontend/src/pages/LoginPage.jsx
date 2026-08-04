@@ -29,12 +29,12 @@ export default function LoginPage() {
   return (
     <div className="auth-page">
       <div className="auth-panel-brand">
-        <h2>Welcome back to ShopVault</h2>
-        <p>Sign in to track orders, manage your profile, and checkout faster.</p>
+        <h2>Welcome back</h2>
+        <p>Sign in to track orders, save favourites, and checkout faster.</p>
         <ul>
-          <li><CheckCircle2 size={18} /> JWT-secured authentication</li>
-          <li><CheckCircle2 size={18} /> Microservices via Kong gateway</li>
-          <li><CheckCircle2 size={18} /> 1000+ test users in local DB</li>
+          <li><CheckCircle2 size={18} /> Order tracking and history</li>
+          <li><CheckCircle2 size={18} /> Saved wishlist across devices</li>
+          <li><CheckCircle2 size={18} /> Faster checkout with saved details</li>
         </ul>
       </div>
 

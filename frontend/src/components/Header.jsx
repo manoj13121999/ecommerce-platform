@@ -1,4 +1,4 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   Heart,
   LogOut,
@@ -13,13 +13,24 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import './Header.css';
 
+const STORE_NAV = [
+  { label: 'Store', to: '/shop' },
+  { label: 'Electronics', to: '/shop?q=electronics' },
+  { label: 'Fashion', to: '/shop?q=fashion' },
+  { label: 'Home', to: '/shop?q=home' },
+  { label: 'Deals', to: '/deals' },
+];
+
 export default function Header() {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const { user, isAuthenticated, logout, loading } = useAuth();
   const { itemCount } = useCart();
   const { count: wishlistCount } = useWishlist();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const isHome = pathname === '/';
 
   const initials = user
     ? `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase()
@@ -34,50 +45,73 @@ export default function Header() {
   }
 
   return (
-    <header className="site-header">
-      <div className="container header-inner">
+    <header className={`site-header${isHome ? ' header-shopvault' : ''}`}>
+      <div className={`header-inner${isHome ? ' header-inner-shopvault' : ' container'}`}>
         <Link to="/" className="brand" onClick={() => setMobileOpen(false)}>
-          <span className="brand-mark">SV</span>
+          {!isHome && <span className="brand-mark">SV</span>}
           <span className="brand-text">ShopVault</span>
         </Link>
 
-        <nav className={`header-nav ${mobileOpen ? 'open' : ''}`}>
-          <NavLink to="/" end onClick={() => setMobileOpen(false)}>
-            Home
-          </NavLink>
-          <NavLink to="/shop" onClick={() => setMobileOpen(false)}>
-            Shop
-          </NavLink>
-          <NavLink to="/deals" onClick={() => setMobileOpen(false)}>
-            Deals
-          </NavLink>
-        </nav>
+        {isHome ? (
+          <nav className={`header-nav header-nav-shopvault ${mobileOpen ? 'open' : ''}`}>
+            {STORE_NAV.map((item) => (
+              <Link
+                key={item.label}
+                to={item.to}
+                onClick={() => setMobileOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        ) : (
+          <nav className={`header-nav ${mobileOpen ? 'open' : ''}`}>
+            <NavLink to="/" end onClick={() => setMobileOpen(false)}>
+              Home
+            </NavLink>
+            <NavLink to="/shop" onClick={() => setMobileOpen(false)}>
+              Shop
+            </NavLink>
+            <NavLink to="/deals" className="nav-deals" onClick={() => setMobileOpen(false)}>
+              Deals
+            </NavLink>
+          </nav>
+        )}
 
-        <form className="header-search" onSubmit={handleSearchSubmit}>
-          <Search size={18} />
-          <input
-            type="search"
-            placeholder="Search products..."
-            aria-label="Search products"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </form>
+        {!isHome && (
+          <form className="header-search" onSubmit={handleSearchSubmit}>
+            <Search size={17} />
+            <input
+              type="search"
+              placeholder="Search for products, brands..."
+              aria-label="Search products"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button type="submit" className="header-search-btn">Search</button>
+          </form>
+        )}
 
-        <div className="header-actions">
-          {isAuthenticated && (
+        <div className={`header-actions${isHome ? ' header-actions-shopvault' : ''}`}>
+          {!isHome && isAuthenticated && (
             <Link to="/account" className="icon-btn wishlist-link" aria-label="Wishlist">
               <Heart size={20} />
               {wishlistCount > 0 && <span className="cart-badge">{wishlistCount}</span>}
             </Link>
           )}
 
-          <button type="button" className="icon-btn cart-btn" aria-label="Cart">
-            <ShoppingBag size={20} />
-            {itemCount > 0 && <span className="cart-badge">{itemCount}</span>}
+          {isHome && (
+            <Link to="/shop" className="icon-btn shopvault-icon-btn" aria-label="Search">
+              <Search size={18} strokeWidth={1.75} />
+            </Link>
+          )}
+
+          <button type="button" className={`icon-btn cart-btn${isHome ? ' shopvault-icon-btn' : ''}`} aria-label="Bag">
+            <ShoppingBag size={18} strokeWidth={isHome ? 1.75 : 2} />
+            {itemCount > 0 && <span className={`cart-badge${isHome ? ' shopvault-cart-badge' : ''}`}>{itemCount}</span>}
           </button>
 
-          {!loading && isAuthenticated ? (
+          {!isHome && !loading && isAuthenticated ? (
             <Link to="/account" className="user-menu" onClick={() => setMobileOpen(false)}>
               <div className="user-avatar">{initials}</div>
               <div className="user-meta">
@@ -86,7 +120,7 @@ export default function Header() {
               </div>
             </Link>
           ) : (
-            !loading && (
+            !isHome && !loading && (
               <div className="auth-links">
                 <Link to="/login" className="btn btn-ghost btn-sm">
                   Login
@@ -98,7 +132,7 @@ export default function Header() {
             )
           )}
 
-          {isAuthenticated && (
+          {!isHome && isAuthenticated && (
             <button type="button" className="icon-btn" onClick={logout} aria-label="Logout">
               <LogOut size={18} />
             </button>

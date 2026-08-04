@@ -128,7 +128,7 @@ export default function ShopPage() {
       <section className="shop-hero">
         <div className="container">
           <h1>Shop all products</h1>
-          <p>Browse 5000+ products with pagination, sorting, filters, and Elasticsearch search.</p>
+          <p>Discover thousands of items across electronics, fashion, home, and more.</p>
           <form className="shop-search" onSubmit={handleSearchSubmit}>
             <Search size={18} />
             <input

@@ -41,9 +41,9 @@ export default function RegisterPage() {
         <h2>Join ShopVault today</h2>
         <p>Create an account to save items, track orders, and enjoy a personalized experience.</p>
         <ul>
-          <li><Sparkles size={18} /> Instant JWT login after signup</li>
-          <li><Sparkles size={18} /> Kafka event on registration</li>
-          <li><Sparkles size={18} /> Built for real ecommerce flows</li>
+          <li><Sparkles size={18} /> Free account in under a minute</li>
+          <li><Sparkles size={18} /> Save items to your wishlist</li>
+          <li><Sparkles size={18} /> Exclusive deals for members</li>
         </ul>
       </div>
 
