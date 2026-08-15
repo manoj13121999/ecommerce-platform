@@ -15,9 +15,9 @@ import './Header.css';
 
 const STORE_NAV = [
   { label: 'Store', to: '/shop' },
-  { label: 'Electronics', to: '/shop?q=electronics' },
-  { label: 'Fashion', to: '/shop?q=fashion' },
-  { label: 'Home', to: '/shop?q=home' },
+  { label: 'Electronics', to: '/shop?category=1' },
+  { label: 'Fashion', to: '/shop?category=9' },
+  { label: 'Home', to: '/shop?category=21' },
   { label: 'Deals', to: '/deals' },
 ];
 
@@ -94,7 +94,7 @@ export default function Header() {
 
         <div className={`header-actions${isHome ? ' header-actions-shopvault' : ''}`}>
           {!isHome && isAuthenticated && (
-            <Link to="/account" className="icon-btn wishlist-link" aria-label="Wishlist">
+            <Link to="/account?tab=wishlist" className="icon-btn wishlist-link" aria-label="Wishlist">
               <Heart size={20} />
               {wishlistCount > 0 && <span className="cart-badge">{wishlistCount}</span>}
             </Link>
@@ -106,10 +106,10 @@ export default function Header() {
             </Link>
           )}
 
-          <button type="button" className={`icon-btn cart-btn${isHome ? ' shopvault-icon-btn' : ''}`} aria-label="Bag">
+          <Link to="/cart" className={`icon-btn cart-btn${isHome ? ' shopvault-icon-btn' : ''}`} aria-label="Bag">
             <ShoppingBag size={18} strokeWidth={isHome ? 1.75 : 2} />
             {itemCount > 0 && <span className={`cart-badge${isHome ? ' shopvault-cart-badge' : ''}`}>{itemCount}</span>}
-          </button>
+          </Link>
 
           {!isHome && !loading && isAuthenticated ? (
             <Link to="/account" className="user-menu" onClick={() => setMobileOpen(false)}>

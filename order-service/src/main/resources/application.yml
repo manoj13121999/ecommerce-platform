@@ -1,5 +1,28 @@
 server:
   port: 8084
+
 spring:
   application:
     name: order-service
+  datasource:
+    url: jdbc:mysql://${ORDER_DB_HOST:127.0.0.1}:${ORDER_DB_PORT:3309}/order_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${ORDER_DB_USER:ecommerce}
+    password: ${ORDER_DB_PASSWORD:ecommerce}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: false
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-me-to-a-256-bit-secret-key-for-local-dev-only!!}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

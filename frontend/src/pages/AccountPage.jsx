@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
-import { Heart, Lock, UserRound } from 'lucide-react';
-import { authApi, catalogApi } from '../api/client';
+import { Link, Navigate, useSearchParams } from 'react-router-dom';
+import { Heart, Lock, Package, UserRound } from 'lucide-react';
+import { authApi, catalogApi, orderApi } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useWishlist } from '../context/WishlistContext';
 import ProductCard from '../components/ProductCard';
@@ -11,7 +11,9 @@ import './AccountPage.css';
 export default function AccountPage() {
   const { user, isAuthenticated, loading, updateProfile } = useAuth();
   const { productIds, refreshWishlist } = useWishlist();
-  const [activeTab, setActiveTab] = useState('profile');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'profile';
+  const setActiveTab = (tab) => setSearchParams({ tab });
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
@@ -25,6 +27,8 @@ export default function AccountPage() {
   const [submittingPassword, setSubmittingPassword] = useState(false);
   const [wishlistProducts, setWishlistProducts] = useState([]);
   const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -47,6 +51,19 @@ export default function AccountPage() {
       .catch(() => setWishlistProducts([]))
       .finally(() => setWishlistLoading(false));
   }, [activeTab, productIds]);
+
+  useEffect(() => {
+    if (activeTab !== 'orders') {
+      setOrders([]);
+      return;
+    }
+
+    setOrdersLoading(true);
+    orderApi.listOrders()
+      .then(setOrders)
+      .catch(() => setOrders([]))
+      .finally(() => setOrdersLoading(false));
+  }, [activeTab]);
 
   if (loading) {
     return <div className="container account-state">Loading account...</div>;
@@ -118,6 +135,14 @@ export default function AccountPage() {
             >
               <Lock size={18} />
               Password
+            </button>
+            <button
+              type="button"
+              className={activeTab === 'orders' ? 'active' : ''}
+              onClick={() => setActiveTab('orders')}
+            >
+              <Package size={18} />
+              Orders
             </button>
             <button
               type="button"
@@ -209,6 +234,31 @@ export default function AccountPage() {
                 </form>
                 {passwordMessage && <div className="form-success">{passwordMessage}</div>}
                 {passwordError && <div className="form-error">{passwordError}</div>}
+              </div>
+            )}
+
+            {activeTab === 'orders' && (
+              <div className="account-card">
+                <h2>Order history</h2>
+                {ordersLoading && <p className="account-empty">Loading orders...</p>}
+                {!ordersLoading && orders.length === 0 && (
+                  <p className="account-empty">
+                    No orders yet. <Link to="/shop">Start shopping</Link>
+                  </p>
+                )}
+                {!ordersLoading && orders.length > 0 && (
+                  <ul className="account-orders">
+                    {orders.map((order) => (
+                      <li key={order.id}>
+                        <div>
+                          <Link to={`/orders/${order.id}`}>Order #{order.id}</Link>
+                          <span>{order.status} · {order.itemCount} items</span>
+                        </div>
+                        <strong>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(order.subtotal)}</strong>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             )}
 

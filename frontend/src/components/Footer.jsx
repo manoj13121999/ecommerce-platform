@@ -31,7 +31,7 @@ export default function Footer() {
           <ul>
             <li><Link to="/login">Login</Link></li>
             <li><Link to="/register">Register</Link></li>
-            <li><Link to="/">Order tracking</Link></li>
+            <li><Link to="/account?tab=orders">Order tracking</Link></li>
           </ul>
         </div>
 

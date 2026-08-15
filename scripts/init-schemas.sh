@@ -9,6 +9,7 @@ cd "$ROOT_DIR"
 
 "${ROOT_DIR}/scripts/schema-user.sh"
 "${ROOT_DIR}/scripts/schema-catalog.sh"
+"${ROOT_DIR}/scripts/schema-order.sh"
 
 echo ""
 echo "All schemas applied. Next:"

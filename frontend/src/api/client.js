@@ -86,3 +86,9 @@ export const cartApi = {
   removeItem: (productId) => request(`/cart/items/${productId}`, { method: 'DELETE' }),
   clearCart: () => request('/cart', { method: 'DELETE' }),
 };
+
+export const orderApi = {
+  placeOrder: (body) => request('/orders', { method: 'POST', body: JSON.stringify(body) }),
+  listOrders: () => request('/orders'),
+  getOrder: (orderId) => request(`/orders/${orderId}`),
+};

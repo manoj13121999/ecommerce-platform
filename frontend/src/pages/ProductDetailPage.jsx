@@ -37,6 +37,7 @@ export default function ProductDetailPage() {
   const [cartMessage, setCartMessage] = useState('');
   const [wishlistMessage, setWishlistMessage] = useState('');
   const [imageSrc, setImageSrc] = useState('');
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     setLoading(true);
@@ -54,6 +55,10 @@ export default function ProductDetailPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
+  useEffect(() => {
+    setQuantity(1);
+  }, [id]);
+
   async function handleAddToCart() {
     if (!isAuthenticated) {
       navigate('/login');
@@ -63,7 +68,7 @@ export default function ProductDetailPage() {
     setAdding(true);
     setCartMessage('');
     try {
-      await addToCart(product, 1);
+      await addToCart(product, quantity);
       setCartMessage('Added to your cart');
     } catch (err) {
       setCartMessage(err.message || 'Could not add to cart');
@@ -165,6 +170,40 @@ export default function ProductDetailPage() {
           </div>
 
           <div className="detail-actions">
+            <div className="detail-qty">
+              <label htmlFor="detail-qty">Qty</label>
+              <div className="qty-control">
+                <button
+                  type="button"
+                  aria-label="Decrease quantity"
+                  disabled={quantity <= 1}
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                >
+                  −
+                </button>
+                <input
+                  id="detail-qty"
+                  type="number"
+                  min={1}
+                  max={product.stock}
+                  value={quantity}
+                  onChange={(e) => {
+                    const next = Number(e.target.value);
+                    if (Number.isFinite(next)) {
+                      setQuantity(Math.min(product.stock, Math.max(1, next)));
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  aria-label="Increase quantity"
+                  disabled={quantity >= product.stock}
+                  onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
+                >
+                  +
+                </button>
+              </div>
+            </div>
             <button
               type="button"
               className="btn btn-primary btn-lg detail-add-btn"
@@ -185,7 +224,12 @@ export default function ProductDetailPage() {
             </button>
           </div>
 
-          {cartMessage && <p className="detail-cart-message">{cartMessage}</p>}
+          {cartMessage && (
+            <p className="detail-cart-message">
+              {cartMessage}{' '}
+              <Link to="/cart">View bag</Link>
+            </p>
+          )}
           {wishlistMessage && <p className="detail-wishlist-message">{wishlistMessage}</p>}
         </div>
       </div>

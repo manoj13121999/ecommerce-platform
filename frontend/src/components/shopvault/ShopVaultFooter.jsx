@@ -14,9 +14,9 @@ export default function ShopVaultFooter() {
             <h4>Shop and Learn</h4>
             <ul>
               <li><Link to="/shop">Store</Link></li>
-              <li><Link to="/shop?q=electronics">Electronics</Link></li>
-              <li><Link to="/shop?q=fashion">Fashion</Link></li>
-              <li><Link to="/shop?q=home">Home</Link></li>
+              <li><Link to="/shop?category=1">Electronics</Link></li>
+              <li><Link to="/shop?category=9">Fashion</Link></li>
+              <li><Link to="/shop?category=21">Home</Link></li>
               <li><Link to="/deals">Deals</Link></li>
             </ul>
           </div>
