@@ -10,7 +10,7 @@ public class DashboardController {
     @GetMapping("/admin")
     public String dashboard(Model model) {
         model.addAttribute("title", "Ecommerce Admin");
-        model.addAttribute("phase", "Phase 1 complete — User Service live. Catalog admin coming in Phase 2.");
+        model.addAttribute("phase", "Phases 1–3 live — users, catalog, cart, orders, and mock payments.");
         return "dashboard";
     }
 }

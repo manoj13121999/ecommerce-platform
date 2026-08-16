@@ -1,7 +1,9 @@
 package com.ecommerce.order.service;
 
 import com.ecommerce.common.event.KafkaTopics;
+import com.ecommerce.common.event.OrderPaidEvent;
 import com.ecommerce.common.event.OrderPlacedEvent;
+import com.ecommerce.common.event.PaymentCompletedEvent;
 import com.ecommerce.order.dto.OrderItemResponse;
 import com.ecommerce.order.dto.OrderResponse;
 import com.ecommerce.order.dto.OrderSummaryResponse;
@@ -82,6 +84,34 @@ public class OrderService {
         Order order = orderRepository.findByIdAndUserId(orderId, userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
         return toResponse(order);
+    }
+
+    @Transactional
+    public void markOrderPaid(PaymentCompletedEvent event) {
+        Order order = orderRepository.findById(event.orderId()).orElse(null);
+        if (order == null || !order.getUserId().equals(event.userId())) {
+            return;
+        }
+        if ("PAID".equals(order.getStatus())) {
+            return;
+        }
+
+        order.setStatus("PAID");
+        orderRepository.save(order);
+
+        List<OrderPaidEvent.OrderPaidItem> items = order.getItems().stream()
+                .map(item -> new OrderPaidEvent.OrderPaidItem(item.getProductId(), item.getQuantity()))
+                .toList();
+
+        kafkaTemplate.send(
+                KafkaTopics.ORDER_PAID,
+                order.getId().toString(),
+                new OrderPaidEvent(
+                        UUID.randomUUID().toString(),
+                        order.getId(),
+                        order.getUserId(),
+                        items,
+                        Instant.now()));
     }
 
     private OrderResponse toResponse(Order order) {

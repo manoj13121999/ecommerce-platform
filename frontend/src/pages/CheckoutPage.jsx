@@ -1,16 +1,22 @@
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { orderApi } from '../api/client';
+import { orderApi, paymentApi } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { formatPrice } from '../utils/formatPrice';
 import './CheckoutPage.css';
+
+const PAYMENT_METHODS = [
+  { id: 'CARD', label: 'Credit / Debit card' },
+  { id: 'UPI', label: 'UPI' },
+];
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const { isAuthenticated, loading: authLoading, user } = useAuth();
   const { cart, clearCart } = useCart();
   const [address, setAddress] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('CARD');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -42,10 +48,18 @@ export default function CheckoutPage() {
           quantity: item.quantity,
         })),
       });
+
+      await paymentApi.processPayment({
+        orderId: order.id,
+        amount: order.subtotal,
+        paymentMethod,
+        customerEmail: user.email,
+      });
+
       await clearCart();
       navigate(`/orders/${order.id}`, { replace: true });
     } catch (err) {
-      setError(err.message || 'Could not place order');
+      setError(err.message || 'Could not complete checkout');
     } finally {
       setSubmitting(false);
     }
@@ -54,7 +68,7 @@ export default function CheckoutPage() {
   return (
     <div className="container checkout-page">
       <h1>Checkout</h1>
-      <p className="checkout-intro">Review your order and enter a delivery address.</p>
+      <p className="checkout-intro">Review your order, choose payment, and enter a delivery address.</p>
 
       <div className="checkout-layout">
         <form className="checkout-form" onSubmit={handleSubmit}>
@@ -74,10 +88,29 @@ export default function CheckoutPage() {
             />
           </section>
 
+          <section className="checkout-section">
+            <h2>Payment</h2>
+            <div className="checkout-payment-options">
+              {PAYMENT_METHODS.map((method) => (
+                <label key={method.id} className="checkout-payment-option">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value={method.id}
+                    checked={paymentMethod === method.id}
+                    onChange={() => setPaymentMethod(method.id)}
+                  />
+                  <span>{method.label}</span>
+                </label>
+              ))}
+            </div>
+            <p className="checkout-payment-note">Mock payment — always succeeds in local development.</p>
+          </section>
+
           {error && <p className="checkout-error">{error}</p>}
 
           <button type="submit" className="btn btn-primary btn-lg" disabled={submitting}>
-            {submitting ? 'Placing order...' : `Place order · ${formatPrice(cart.subtotal)}`}
+            {submitting ? 'Processing payment...' : `Pay ${formatPrice(cart.subtotal)}`}
           </button>
           <Link to="/cart" className="checkout-back">Back to bag</Link>
         </form>

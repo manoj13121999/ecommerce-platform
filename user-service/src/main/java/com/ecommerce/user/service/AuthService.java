@@ -1,6 +1,7 @@
 package com.ecommerce.user.service;
 
 import com.ecommerce.common.event.KafkaTopics;
+import com.ecommerce.common.event.PasswordResetRequestedEvent;
 import com.ecommerce.common.event.UserRegisteredEvent;
 import com.ecommerce.user.dto.AuthResponse;
 import com.ecommerce.user.dto.ChangePasswordRequest;
@@ -123,7 +124,15 @@ public class AuthService {
             token.setToken(UUID.randomUUID().toString());
             token.setExpiresAt(Instant.now().plusSeconds(3600));
             passwordResetTokenRepository.save(token);
-            // Notification service will handle email delivery via Kafka in a later phase.
+            kafkaTemplate.send(
+                    KafkaTopics.PASSWORD_RESET_REQUESTED,
+                    user.getEmail(),
+                    new PasswordResetRequestedEvent(
+                            UUID.randomUUID().toString(),
+                            user.getId(),
+                            user.getEmail(),
+                            token.getToken(),
+                            Instant.now()));
         });
 
         return Map.of("message", "If the email exists, a reset link has been sent");

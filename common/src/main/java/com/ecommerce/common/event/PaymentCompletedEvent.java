@@ -7,6 +7,7 @@ public record PaymentCompletedEvent(
         String eventId,
         Long orderId,
         Long userId,
+        String customerEmail,
         String paymentReference,
         BigDecimal amount,
         Instant occurredAt

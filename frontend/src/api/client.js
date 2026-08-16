@@ -92,3 +92,8 @@ export const orderApi = {
   listOrders: () => request('/orders'),
   getOrder: (orderId) => request(`/orders/${orderId}`),
 };
+
+export const paymentApi = {
+  processPayment: (body) => request('/payments', { method: 'POST', body: JSON.stringify(body) }),
+  getPaymentForOrder: (orderId) => request(`/payments/order/${orderId}`),
+};

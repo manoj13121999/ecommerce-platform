@@ -94,8 +94,22 @@
   color: var(--color-text-muted);
 }
 
-.order-state {
-  text-align: center;
+.order-success-pending {
+  color: var(--color-brand);
+}
+
+.order-status-paid {
+  color: var(--color-success);
+}
+
+.order-status-pending {
+  color: var(--color-brand);
+}
+
+.order-pay-error {
+  margin: 0.65rem 0 0;
+  color: var(--color-danger);
+  font-size: 0.88rem;
 }
 
 .order-state .btn {
