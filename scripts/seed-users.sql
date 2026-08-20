@@ -1,10 +1,13 @@
 -- Seed 1000 users for local/dev testing. NOT a Flyway migration.
 -- Run: ./scripts/seed-users.sh
 -- Password for every user: password123
+-- Admin user: admin@shopvault.local / password123
 -- BCrypt hash: $2a$10$MJV6F/14v43uN8G25QjRX.lV5AeKVrRzGqM4dzapHWO97Xcl5Zk82
 
 DELETE FROM password_reset_tokens;
 DELETE FROM users;
+
+INSERT INTO users (id, email, password_hash, first_name, last_name, phone, role, enabled) VALUES (1001, 'admin@shopvault.local', '$2a$10$MJV6F/14v43uN8G25QjRX.lV5AeKVrRzGqM4dzapHWO97Xcl5Zk82', 'ShopVault', 'Admin', NULL, 'ADMIN', TRUE);
 
 INSERT INTO users (id, email, password_hash, first_name, last_name, phone, role, enabled) VALUES (1, 'manojprabhakar1312@gmail.com', '$2a$10$MJV6F/14v43uN8G25QjRX.lV5AeKVrRzGqM4dzapHWO97Xcl5Zk82', 'Manoj', 'Prabhakar', '9876543210', 'CUSTOMER', TRUE);
 INSERT INTO users (id, email, password_hash, first_name, last_name, phone, role, enabled) VALUES (2, 'manojguru1961999@gmail.com', '$2a$10$MJV6F/14v43uN8G25QjRX.lV5AeKVrRzGqM4dzapHWO97Xcl5Zk82', 'Manoj', 'Guru', '9123456780', 'CUSTOMER', TRUE);

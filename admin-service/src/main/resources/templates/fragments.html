@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' · ShopVault Admin'">ShopVault Admin</title>
+    <link rel="stylesheet" th:href="@{/admin.css}" href="/admin.css">
+</head>
+<body>
+<header class="admin-header" th:fragment="header">
+    <div class="admin-header-inner">
+        <a class="admin-brand" th:href="@{/admin}">ShopVault Admin</a>
+        <nav class="admin-nav" th:if="${adminEmail}">
+            <a th:href="@{/admin/products}">Products</a>
+            <span class="admin-user" th:text="${adminEmail}">admin</span>
+            <form th:action="@{/admin/logout}" method="post">
+                <button type="submit" class="link-btn">Logout</button>
+            </form>
+        </nav>
+    </div>
+</header>
+<div th:fragment="flashes">
+    <div th:if="${message}" class="flash success" th:text="${message}"></div>
+    <div th:if="${error}" class="flash error" th:text="${error}"></div>
+</div>
+</body>
+</html>

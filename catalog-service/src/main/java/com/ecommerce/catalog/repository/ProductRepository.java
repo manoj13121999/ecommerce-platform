@@ -72,4 +72,22 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             GROUP BY p.category.id
             """)
     List<Object[]> countActiveProductsByCategory();
+
+    @Query("""
+            SELECT p FROM Product p
+            JOIN FETCH p.category c
+            WHERE (:query IS NULL OR :query = '' OR LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%')))
+            """)
+    Page<Product> findForAdmin(@Param("query") String query, Pageable pageable);
+
+    @Query("""
+            SELECT p FROM Product p
+            JOIN FETCH p.category c
+            WHERE p.id = :id
+            """)
+    java.util.Optional<Product> findByIdWithCategory(@Param("id") Long id);
+
+    boolean existsBySlug(String slug);
+
+    boolean existsBySlugAndIdNot(String slug, Long id);
 }

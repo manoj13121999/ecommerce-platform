@@ -42,5 +42,6 @@ echo "Loading 1000 users from scripts/seed-users.sql ..."
 run_mysql < "$SQL_FILE"
 
 echo "Done."
+echo "  admin@shopvault.local           / password123  (ADMIN)"
 echo "  manojprabhakar1312@gmail.com  / password123"
 echo "  manojguru1961999@gmail.com    / password123"

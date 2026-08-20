@@ -1,6 +1,7 @@
 package com.ecommerce.catalog.mapper;
 
 import com.ecommerce.catalog.document.ProductDocument;
+import com.ecommerce.catalog.dto.AdminProductResponse;
 import com.ecommerce.catalog.dto.CategoryResponse;
 import com.ecommerce.catalog.dto.ProductResponse;
 import com.ecommerce.catalog.entity.Category;
@@ -33,6 +34,22 @@ public final class CatalogMapper {
                 product.getImageUrl(),
                 category.getId(),
                 category.getName());
+    }
+
+    public static AdminProductResponse toAdminProductResponse(Product product) {
+        Category category = product.getCategory();
+        return new AdminProductResponse(
+                product.getId(),
+                product.getName(),
+                product.getSlug(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getCompareAtPrice(),
+                product.getStock(),
+                product.getImageUrl(),
+                category.getId(),
+                category.getName(),
+                product.isActive());
     }
 
     public static ProductDocument toProductDocument(Product product) {

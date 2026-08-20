@@ -16,6 +16,7 @@ services:
         paths:
           - /api/products
           - /api/categories
+          - /api/admin
         strip_path: false
 
   - name: cart-service
