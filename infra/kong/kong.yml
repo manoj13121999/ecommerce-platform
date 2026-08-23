@@ -16,7 +16,7 @@ services:
         paths:
           - /api/products
           - /api/categories
-          - /api/admin
+          - /api/admin/products
         strip_path: false
 
   - name: cart-service
@@ -33,6 +33,7 @@ services:
       - name: order-routes
         paths:
           - /api/orders
+          - /api/admin/orders
         strip_path: false
 
   - name: payment-service

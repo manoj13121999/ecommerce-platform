@@ -12,6 +12,7 @@
         <a class="admin-brand" th:href="@{/admin}">ShopVault Admin</a>
         <nav class="admin-nav" th:if="${adminEmail}">
             <a th:href="@{/admin/products}">Products</a>
+            <a th:href="@{/admin/orders}">Orders</a>
             <span class="admin-user" th:text="${adminEmail}">admin</span>
             <form th:action="@{/admin/logout}" method="post">
                 <button type="submit" class="link-btn">Logout</button>

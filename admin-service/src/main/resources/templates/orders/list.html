@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Orders')}"></head>
+<body>
+<div th:replace="~{fragments :: header}"></div>
+<main class="admin-main">
+    <div th:replace="~{fragments :: flashes}"></div>
+    <div class="card">
+        <div class="toolbar">
+            <div>
+                <h1 style="margin:0 0 0.25rem">Orders</h1>
+                <p class="muted" style="margin:0" th:text="${totalElements} + ' total'">0 total</p>
+            </div>
+        </div>
+
+        <form class="search-form" th:action="@{/admin/orders}" method="get">
+            <select name="status">
+                <option value="">All statuses</option>
+                <option th:each="item : ${statuses}"
+                        th:value="${item}"
+                        th:text="${item}"
+                        th:selected="${item == status}">PLACED</option>
+            </select>
+            <button type="submit" class="btn">Filter</button>
+        </form>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Order</th>
+                <th>Customer</th>
+                <th>Status</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Placed</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders}">
+                <td th:text="'#' + ${order.id}">#1</td>
+                <td th:text="'User ' + ${order.userId}">User 1</td>
+                <td>
+                    <span class="badge" th:classappend="' badge-' + ${#strings.toLowerCase(order.status)}"
+                          th:text="${order.status}">PAID</span>
+                </td>
+                <td th:text="${order.itemCount}">0</td>
+                <td th:text="${#numbers.formatDecimal(order.subtotal, 1, 'COMMA', 2, 'POINT')}">0</td>
+                <td th:text="${#strings.substring(order.createdAt, 0, 16)}">2026-01-01</td>
+                <td><a class="btn" th:href="@{/admin/orders/{id}(id=${order.id})}">View</a></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="pagination" th:if="${totalPages > 1}">
+            <a class="btn" th:if="${page > 0}" th:href="@{/admin/orders(page=${page - 1}, status=${status})}">Previous</a>
+            <span class="muted" th:text="'Page ' + (${page} + 1) + ' of ' + ${totalPages}">Page 1</span>
+            <a class="btn" th:if="${page + 1 < totalPages}" th:href="@{/admin/orders(page=${page + 1}, status=${status})}">Next</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

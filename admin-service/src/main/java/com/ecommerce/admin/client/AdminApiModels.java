@@ -45,4 +45,48 @@ public class AdminApiModels {
             int totalPages
     ) {
     }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record AdminOrderSummaryResponse(
+            Long id,
+            Long userId,
+            String status,
+            BigDecimal subtotal,
+            String createdAt,
+            int itemCount
+    ) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record AdminOrderPageResponse(
+            List<AdminOrderSummaryResponse> content,
+            int page,
+            int size,
+            long totalElements,
+            int totalPages
+    ) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record OrderItemResponse(
+            Long productId,
+            String productName,
+            BigDecimal price,
+            String imageUrl,
+            int quantity,
+            BigDecimal lineTotal
+    ) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record OrderDetailResponse(
+            Long id,
+            Long userId,
+            String status,
+            BigDecimal subtotal,
+            String shippingAddress,
+            String createdAt,
+            List<OrderItemResponse> items
+    ) {
+    }
 }

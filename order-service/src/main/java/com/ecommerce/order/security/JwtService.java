@@ -28,4 +28,9 @@ public class JwtService {
     public Long getUserId(String token) {
         return Long.parseLong(parseToken(token).getSubject());
     }
+
+    public String getRole(String token) {
+        Object role = parseToken(token).get("role");
+        return role == null ? "CUSTOMER" : role.toString();
+    }
 }
