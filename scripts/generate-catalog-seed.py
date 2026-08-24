@@ -185,8 +185,8 @@ VERIFIED_BY_THEME = {
         "1450778869180-41d0601e046e",
     ],
     "tools": [
-        "1581094794329-c8112a89af12", "1581094794329-c8112a89af12",
-        "1581094794329-c8112a89af12", "1581094794329-c8112a89af12",
+        "1504148455328-c376922d50ac", "1581094794329-c8112a89af12",
+        "1504148455328-c376922d50ac", "1581094794329-c8112a89af12",
     ],
     "default": ["1560472354-b33ff0c44a43"],
 }
@@ -201,6 +201,14 @@ PREFIXES = [
     "Essential", "Classic", "Premium", "Urban", "Comfort", "Daily", "Active",
     "Modern", "Pure", "Royal", "Eco", "Bold", "Fresh", "Studio", "Elite",
 ]
+
+COLORS = [
+    "Onyx", "Glacier", "Sunset", "Midnight", "Pearl", "Sage", "Coral", "Slate",
+    "Indigo", "Amber", "Ivory", "Charcoal", "Ruby", "Teal", "Bronze", "Lilac",
+    "Sand", "Forest", "Copper", "Ocean", "Rose", "Graphite", "Mocha", "Citrus",
+]
+SIZES = ["Compact", "Standard", "Pro", "Max", "Lite", "Plus"]
+VARIANTS = [f"{color} {size}" for color in COLORS for size in SIZES][:100]
 
 CATEGORIES = [
     (1, "Electronics", "electronics", "Phones, laptops, audio, and smart gadgets"),
@@ -707,6 +715,67 @@ def slugify(text: str) -> str:
     return text.lower().replace("&", "and").replace("'", "").replace(" ", "-")
 
 
+def normalize_image_url(url: str) -> str:
+    if not url:
+        return ""
+    base = url.split("?", 1)[0]
+    if "images.unsplash.com/photo-" in base:
+        photo_id = base.rsplit("photo-", 1)[-1]
+        return f"https://images.unsplash.com/photo-{photo_id}{IMG_SUFFIX}"
+    return url
+
+
+def collect_theme_images(theme: str, types: list) -> list[str]:
+    images: list[str] = []
+    seen: set[str] = set()
+
+    for entry in types:
+        image = normalize_image_url(entry[3])
+        if image and image not in seen:
+            images.append(image)
+            seen.add(image)
+
+    for photo_id in VERIFIED_BY_THEME.get(theme, VERIFIED_BY_THEME["default"]):
+        image = f"https://images.unsplash.com/photo-{photo_id}{IMG_SUFFIX}"
+        if image not in seen:
+            images.append(image)
+            seen.add(image)
+
+    if not images:
+        return [f"https://images.unsplash.com/photo-{VERIFIED_BY_THEME['default'][0]}{IMG_SUFFIX}"]
+    return images
+
+
+def build_global_image_pool() -> list[str]:
+    images: list[str] = []
+    seen: set[str] = set()
+
+    for types in THEME_TYPES.values():
+        for entry in types:
+            image = normalize_image_url(entry[3])
+            if image and image not in seen:
+                images.append(image)
+                seen.add(image)
+
+    for pool in VERIFIED_BY_THEME.values():
+        for photo_id in pool:
+            image = f"https://images.unsplash.com/photo-{photo_id}{IMG_SUFFIX}"
+            if image not in seen:
+                images.append(image)
+                seen.add(image)
+
+    return images
+
+
+GLOBAL_IMAGE_POOL = build_global_image_pool()
+
+
+def pick_product_image(theme: str, types: list, product_id: int) -> str:
+    theme_images = collect_theme_images(theme, types)
+    combined = theme_images + [img for img in GLOBAL_IMAGE_POOL if img not in theme_images]
+    return combined[(product_id - 1) % len(combined)]
+
+
 def sql_str(value: str) -> str:
     return "'" + value.replace("'", "''") + "'"
 
@@ -737,11 +806,11 @@ def main() -> None:
         for i in range(100):
             type_label, (price_min, price_max), description, _image = types[i % len(types)]
             prefix = PREFIXES[(product_id + i) % len(PREFIXES)]
-            product_name = f"{prefix} {type_label}"
+            product_name = f"{prefix} {type_label} — {VARIANTS[i]}"
             product_slug = f"{slugify(product_name)}-{product_id}"
             price = round(random.uniform(price_min, price_max), 2)
             stock = random.randint(15, 250)
-            image = theme_image(theme, i)
+            image = pick_product_image(theme, types, product_id)
             lines.append(
                 "INSERT INTO products (id, category_id, name, slug, description, price, stock, image_url, active) VALUES "
                 f"({product_id}, {cat_id}, {sql_str(product_name)}, {sql_str(product_slug)}, "
