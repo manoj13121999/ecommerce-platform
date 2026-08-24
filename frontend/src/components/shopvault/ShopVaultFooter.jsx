@@ -13,7 +13,7 @@ export default function ShopVaultFooter() {
           <div>
             <h4>Shop and Learn</h4>
             <ul>
-              <li><Link to="/shop">Store</Link></li>
+              <li><Link to="/shop">Shop all</Link></li>
               <li><Link to="/shop?category=1">Electronics</Link></li>
               <li><Link to="/shop?category=9">Fashion</Link></li>
               <li><Link to="/shop?category=21">Home</Link></li>

@@ -14,7 +14,6 @@ import { useWishlist } from '../context/WishlistContext';
 import './Header.css';
 
 const STORE_NAV = [
-  { label: 'Store', to: '/shop' },
   { label: 'Electronics', to: '/shop?category=1' },
   { label: 'Fashion', to: '/shop?category=9' },
   { label: 'Home', to: '/shop?category=21' },
@@ -63,6 +62,15 @@ export default function Header() {
                 {item.label}
               </Link>
             ))}
+            {mobileOpen && !loading && !isAuthenticated && (
+              <>
+                <Link to="/login" onClick={() => setMobileOpen(false)}>Log in</Link>
+                <Link to="/register" onClick={() => setMobileOpen(false)}>Sign up</Link>
+              </>
+            )}
+            {mobileOpen && !loading && isAuthenticated && (
+              <Link to="/account" onClick={() => setMobileOpen(false)}>Account</Link>
+            )}
           </nav>
         ) : (
           <nav className={`header-nav ${mobileOpen ? 'open' : ''}`}>
@@ -110,6 +118,23 @@ export default function Header() {
             <ShoppingBag size={18} strokeWidth={isHome ? 1.75 : 2} />
             {itemCount > 0 && <span className={`cart-badge${isHome ? ' shopvault-cart-badge' : ''}`}>{itemCount}</span>}
           </Link>
+
+          {isHome && !loading && isAuthenticated && (
+            <Link to="/account" className="shopvault-auth-link" onClick={() => setMobileOpen(false)}>
+              Account
+            </Link>
+          )}
+
+          {isHome && !loading && !isAuthenticated && (
+            <div className="shopvault-auth-links">
+              <Link to="/login" className="shopvault-auth-link" onClick={() => setMobileOpen(false)}>
+                Log in
+              </Link>
+              <Link to="/register" className="shopvault-auth-link shopvault-auth-link-primary" onClick={() => setMobileOpen(false)}>
+                Sign up
+              </Link>
+            </div>
+          )}
 
           {!isHome && !loading && isAuthenticated ? (
             <Link to="/account" className="user-menu" onClick={() => setMobileOpen(false)}>

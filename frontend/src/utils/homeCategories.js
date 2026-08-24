@@ -1,11 +1,17 @@
-// Curated category hero images (verified Unsplash URLs)
+// Curated category hero images (verified Unsplash IDs from catalog seed)
 const IMG = (id, width = 900) =>
   `https://images.unsplash.com/photo-${id}?w=${width}&auto=format&fit=crop&q=80`;
 
 export const CATEGORY_HERO_IMAGES = {
-  electronics: IMG('1517336714731-489689fd1ca8'),
-  fashion: IMG('1521572163474-6864f9cf17ab'),
-  home: IMG('1586023492125-27b2c045efd7'),
+  electronics: IMG('1505740420928-5e560c06d30e'),
+  fashion: IMG('1542272604-787c3835535d'),
+  home: IMG('1631049307264-da0ec9d70304'),
+};
+
+export const SPOTLIGHT_CATEGORY_IDS = {
+  electronics: 1,
+  fashion: 9,
+  home: 21,
 };
 
 export function pickCategory(categories, ...names) {
@@ -15,7 +21,18 @@ export function pickCategory(categories, ...names) {
     );
     if (match) return match;
   }
-  return categories[0] || null;
+  return null;
+}
+
+export function pickCategoryById(categories, id) {
+  return categories.find((category) => category.id === id) || null;
+}
+
+export function spotlightImage(label) {
+  const key = label.toLowerCase();
+  if (key === 'fashion') return CATEGORY_HERO_IMAGES.fashion;
+  if (key === 'home') return CATEGORY_HERO_IMAGES.home;
+  return CATEGORY_HERO_IMAGES.electronics;
 }
 
 export function categoryImage(category) {
