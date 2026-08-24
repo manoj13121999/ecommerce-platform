@@ -1,7 +1,12 @@
 import { Link } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import {
+  ChevronRight,
+  RotateCcw,
+  ShieldCheck,
+  Sparkles,
+  Truck,
+} from 'lucide-react';
 import { useState } from 'react';
-import ShopVaultProductCard from '../../components/shopvault/ShopVaultProductCard';
 import {
   pickCategoryById,
   SPOTLIGHT_CATEGORY_IDS,
@@ -27,7 +32,33 @@ const SPOTLIGHT_CATEGORIES = [
   },
 ];
 
-export default function ShopVaultHome({ categories, featuredProducts, loadingFeatured, featuredError }) {
+const PERKS = [
+  {
+    icon: Truck,
+    title: 'Free delivery',
+    text: 'On orders over ₹999 across India.',
+  },
+  {
+    icon: RotateCcw,
+    title: 'Easy returns',
+    text: '7-day hassle-free returns on eligible items.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Secure checkout',
+    text: 'Encrypted payments and protected order data.',
+  },
+  {
+    icon: Sparkles,
+    title: 'Member perks',
+    text: 'Wishlists, order history, and exclusive deals.',
+  },
+];
+
+const DEALS_IMAGE =
+  'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=900&auto=format&fit=crop&q=80';
+
+export default function ShopVaultHome({ categories }) {
   const spotlightCategories = SPOTLIGHT_CATEGORIES.map((item) => ({
     ...item,
     category: pickCategoryById(categories, item.categoryId),
@@ -89,48 +120,46 @@ export default function ShopVaultHome({ categories, featuredProducts, loadingFea
         </div>
       </section>
 
-      <section className="shopvault-latest">
-        <div className="shopvault-latest-inner">
-          <div className="shopvault-latest-header">
-            <h2>New arrivals</h2>
-            <Link to="/shop?sort=newest" className="shopvault-link">
-              See all <ChevronRight size={16} strokeWidth={2} />
+      <section className="shopvault-deals-spotlight">
+        <div className="shopvault-deals-inner">
+          <div className="shopvault-deals-copy">
+            <p className="shopvault-deals-eyebrow">Limited time</p>
+            <h2>Today&apos;s best deals</h2>
+            <p>Hand-picked markdowns across electronics, fashion, and home.</p>
+            <Link to="/deals" className="shopvault-hero-btn shopvault-hero-btn-light">
+              Shop deals <ChevronRight size={16} strokeWidth={2} />
             </Link>
           </div>
-
-          <div className="shopvault-product-rail">
-            {loadingFeatured && Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="shopvault-rail-skeleton" />
-            ))}
-
-            {!loadingFeatured && featuredProducts.length > 0 && featuredProducts.map((product) => (
-              <ShopVaultProductCard key={product.id} product={product} />
-            ))}
+          <div className="shopvault-deals-art">
+            <img src={DEALS_IMAGE} alt="" loading="lazy" />
           </div>
-
-          {!loadingFeatured && featuredProducts.length === 0 && (
-            <div className="shopvault-empty-rail">
-              <p>{featuredError ? 'Could not load products right now.' : 'No products to show yet.'}</p>
-              <Link to="/shop" className="shopvault-link">
-                Browse the shop <ChevronRight size={16} strokeWidth={2} />
-              </Link>
-            </div>
-          )}
         </div>
       </section>
 
-      <section className="shopvault-help-strip">
-        <div className="shopvault-help-inner">
-          <div className="shopvault-help-card">
-            <h3>Free delivery over ₹999</h3>
-            <p>On eligible orders across India.</p>
-          </div>
-          <div className="shopvault-help-card">
-            <h3>7-day easy returns</h3>
-            <Link to="/shop" className="shopvault-link">
-              Shop with confidence <ChevronRight size={15} strokeWidth={2} />
-            </Link>
-          </div>
+      <section className="shopvault-perks">
+        <div className="shopvault-perks-inner">
+          {PERKS.map(({ icon: Icon, title, text }) => (
+            <article key={title} className="shopvault-perk">
+              <div className="shopvault-perk-icon">
+                <Icon size={22} strokeWidth={1.75} />
+              </div>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="shopvault-cta">
+        <h2>Your vault awaits.</h2>
+        <p>Create a free account to save wishlists and track every order.</p>
+        <div className="shopvault-hero-links">
+          <Link to="/register" className="shopvault-hero-btn shopvault-hero-btn-primary">
+            Create account
+          </Link>
+          <Link to="/shop" className="shopvault-hero-btn shopvault-hero-btn-secondary">
+            Browse catalog
+          </Link>
         </div>
       </section>
     </div>

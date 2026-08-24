@@ -159,93 +159,136 @@
   font-weight: 400;
 }
 
-.shopvault-latest {
-  background: #f5f5f7;
-  padding: 2.75rem 0 3rem;
+.shopvault-deals-spotlight {
+  background: linear-gradient(135deg, #1d1d1f 0%, #3a3a3c 100%);
+  color: #f5f5f7;
+  padding: 2.5rem 1.25rem;
 }
 
-.shopvault-latest-inner {
-  width: min(1260px, calc(100% - 1.5rem));
+.shopvault-deals-inner {
+  width: min(1100px, 100%);
   margin-inline: auto;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 2rem;
+  align-items: center;
 }
 
-.shopvault-latest-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.35rem;
-  padding-left: 0.25rem;
+.shopvault-deals-eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #ff9f0a;
 }
 
-.shopvault-latest-header h2 {
-  margin: 0;
-  font-size: clamp(1.5rem, 3vw, 1.75rem);
+.shopvault-deals-copy h2 {
+  margin: 0 0 0.65rem;
+  font-size: clamp(2rem, 4vw, 2.75rem);
   font-weight: 600;
   letter-spacing: -0.02em;
+  line-height: 1.08;
+}
+
+.shopvault-deals-copy p {
+  margin: 0 0 1.25rem;
+  max-width: 26rem;
+  font-size: 1.0625rem;
+  line-height: 1.45;
+  color: rgba(245, 245, 247, 0.78);
+}
+
+.shopvault-deals-art {
+  aspect-ratio: 4 / 3;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #000;
+}
+
+.shopvault-deals-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.shopvault-hero-btn-light {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  background: #f5f5f7;
+  color: #1d1d1f;
+  min-width: auto;
+}
+
+.shopvault-hero-btn-light:hover {
+  background: #fff;
   color: #1d1d1f;
 }
 
-.shopvault-empty-rail {
+.shopvault-perks {
+  background: #f5f5f7;
+  padding: 2.75rem 1.25rem;
+}
+
+.shopvault-perks-inner {
+  width: min(1100px, 100%);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.shopvault-perk {
   text-align: center;
-  padding: 2.5rem 1rem;
+}
+
+.shopvault-perk-icon {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 0.85rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
   background: #fff;
-  border-radius: 18px;
+  color: #1d1d1f;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.shopvault-perk h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.shopvault-perk p {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.45;
   color: #6e6e73;
 }
 
-.shopvault-empty-rail p {
-  margin: 0 0 0.75rem;
-  font-size: 1.0625rem;
-}
-
-.shopvault-product-rail {
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  padding-bottom: 0.5rem;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.shopvault-product-rail::-webkit-scrollbar {
-  display: none;
-}
-
-.shopvault-rail-skeleton {
-  flex: 0 0 280px;
-  height: 360px;
-  border-radius: 18px;
-  background: linear-gradient(90deg, #ececee 25%, #e0e0e5 50%, #ececee 75%);
-  background-size: 200% 100%;
-  animation: shopvault-shimmer 1.2s infinite;
-}
-
-.shopvault-help-strip {
+.shopvault-cta {
+  text-align: center;
+  padding: 3rem 1.5rem 3.5rem;
   background: #fff;
-  padding: 2rem 0 2.5rem;
   border-top: 1px solid #d2d2d7;
 }
 
-.shopvault-help-inner {
-  width: min(980px, calc(100% - 2rem));
-  margin-inline: auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-}
-
-.shopvault-help-card h3 {
-  margin: 0 0 0.35rem;
-  font-size: 1.3125rem;
+.shopvault-cta h2 {
+  margin: 0 0 0.55rem;
+  font-size: clamp(1.75rem, 3.5vw, 2.25rem);
   font-weight: 600;
   letter-spacing: -0.02em;
 }
 
-@keyframes shopvault-shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+.shopvault-cta p {
+  margin: 0 auto 1.25rem;
+  max-width: 26rem;
+  font-size: 1.0625rem;
+  line-height: 1.45;
+  color: #6e6e73;
 }
 
 @media (max-width: 900px) {
@@ -253,14 +296,26 @@
     grid-template-columns: 1fr;
   }
 
-  .shopvault-help-inner {
+  .shopvault-deals-inner {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+  }
+
+  .shopvault-deals-art {
+    order: -1;
+    max-height: 240px;
+  }
+
+  .shopvault-perks-inner {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 640px) {
   .shopvault-hero {
     padding-top: 2.25rem;
+  }
+
+  .shopvault-perks-inner {
+    grid-template-columns: 1fr;
   }
 }
