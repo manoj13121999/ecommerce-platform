@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('User detail')}"></head>
+<body>
+<div th:replace="~{fragments :: header}"></div>
+<main class="admin-main">
+    <div th:replace="~{fragments :: flashes}"></div>
+    <div class="card">
+        <div class="toolbar">
+            <div>
+                <h1 style="margin:0 0 0.25rem" th:text="${user.firstName + ' ' + user.lastName}">User</h1>
+                <p class="muted" style="margin:0" th:text="${user.email}">email</p>
+            </div>
+            <a class="btn" th:href="@{/admin/users}">Back to users</a>
+        </div>
+
+        <div class="detail-grid">
+            <section>
+                <h2>Profile</h2>
+                <p><span class="muted">User ID</span> <span th:text="${user.id}">1</span></p>
+                <p><span class="muted">Phone</span> <span th:text="${user.phone ?: '—'}">—</span></p>
+                <p><span class="muted">Joined</span> <span th:text="${#strings.substring(user.createdAt, 0, 16)}">2026-01-01</span></p>
+                <p><span class="muted">Updated</span> <span th:text="${#strings.substring(user.updatedAt, 0, 16)}">2026-01-01</span></p>
+                <p>
+                    <span class="muted">Role</span>
+                    <span class="badge" th:classappend="' badge-role-' + ${#strings.toLowerCase(user.role)}"
+                          th:text="${user.role}">CUSTOMER</span>
+                </p>
+                <p>
+                    <span class="muted">Status</span>
+                    <span th:class="${user.enabled} ? 'badge badge-active' : 'badge badge-inactive'"
+                          th:text="${user.enabled} ? 'Active' : 'Disabled'">Active</span>
+                </p>
+            </section>
+
+            <section>
+                <h2>Manage account</h2>
+                <form class="status-form" th:action="@{/admin/users/{id}/update(id=${user.id})}" method="post">
+                    <label for="role">Role</label>
+                    <select id="role" name="role">
+                        <option th:each="item : ${roles}"
+                                th:value="${item}"
+                                th:text="${item}"
+                                th:selected="${item == user.role}">CUSTOMER</option>
+                    </select>
+
+                    <label style="margin-top:0.85rem">
+                        <input type="checkbox" name="enabled" value="true" th:checked="${user.enabled}">
+                        Account enabled
+                    </label>
+
+                    <div class="actions" style="margin-top:1rem">
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+</main>
+</body>
+</html>

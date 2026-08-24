@@ -11,7 +11,7 @@ public class DashboardController {
     @GetMapping("/admin")
     public String dashboard(Model model, Authentication authentication) {
         model.addAttribute("title", "ShopVault Admin");
-        model.addAttribute("phase", "Phase 4 complete — manage products and orders.");
+        model.addAttribute("phase", "All admin phases live — products, orders, and users.");
         model.addAttribute("adminEmail", authentication.getName());
         return "dashboard";
     }

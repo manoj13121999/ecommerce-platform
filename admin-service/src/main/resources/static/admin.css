@@ -277,6 +277,8 @@ body {
 .badge-shipped { background: #fefce8; color: #a16207; }
 .badge-delivered { background: #f0fdf4; color: #15803d; }
 .badge-cancelled { background: #fef2f2; color: #b91c1c; }
+.badge-role-admin { background: #ede9fe; color: #6d28d9; }
+.badge-role-customer { background: #f1f5f9; color: #475569; }
 
 @media (max-width: 768px) {
     .detail-grid {

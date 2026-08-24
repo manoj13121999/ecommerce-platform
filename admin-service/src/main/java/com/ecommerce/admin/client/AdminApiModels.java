@@ -89,4 +89,40 @@ public class AdminApiModels {
             List<OrderItemResponse> items
     ) {
     }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record AdminUserSummaryResponse(
+            Long id,
+            String email,
+            String firstName,
+            String lastName,
+            String role,
+            boolean enabled,
+            String createdAt
+    ) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record AdminUserPageResponse(
+            List<AdminUserSummaryResponse> content,
+            int page,
+            int size,
+            long totalElements,
+            int totalPages
+    ) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record AdminUserDetailResponse(
+            Long id,
+            String email,
+            String firstName,
+            String lastName,
+            String phone,
+            String role,
+            boolean enabled,
+            String createdAt,
+            String updatedAt
+    ) {
+    }
 }

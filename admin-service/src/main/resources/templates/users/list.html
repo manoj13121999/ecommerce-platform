@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Users')}"></head>
+<body>
+<div th:replace="~{fragments :: header}"></div>
+<main class="admin-main">
+    <div th:replace="~{fragments :: flashes}"></div>
+    <div class="card">
+        <div class="toolbar">
+            <div>
+                <h1 style="margin:0 0 0.25rem">Users</h1>
+                <p class="muted" style="margin:0" th:text="${totalElements} + ' total'">0 total</p>
+            </div>
+        </div>
+
+        <form class="search-form" th:action="@{/admin/users}" method="get">
+            <input type="search" name="q" placeholder="Search by name or email" th:value="${q}">
+            <button type="submit" class="btn">Search</button>
+        </form>
+
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}">1</td>
+                <td th:text="${user.firstName + ' ' + user.lastName}">Name</td>
+                <td th:text="${user.email}">email</td>
+                <td>
+                    <span class="badge" th:classappend="' badge-role-' + ${#strings.toLowerCase(user.role)}"
+                          th:text="${user.role}">CUSTOMER</span>
+                </td>
+                <td>
+                    <span th:class="${user.enabled} ? 'badge badge-active' : 'badge badge-inactive'"
+                          th:text="${user.enabled} ? 'Active' : 'Disabled'">Active</span>
+                </td>
+                <td th:text="${#strings.substring(user.createdAt, 0, 10)}">2026-01-01</td>
+                <td><a class="btn" th:href="@{/admin/users/{id}(id=${user.id})}">View</a></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="pagination" th:if="${totalPages > 1}">
+            <a class="btn" th:if="${page > 0}" th:href="@{/admin/users(page=${page - 1}, q=${q})}">Previous</a>
+            <span class="muted" th:text="'Page ' + (${page} + 1) + ' of ' + ${totalPages}">Page 1</span>
+            <a class="btn" th:if="${page + 1 < totalPages}" th:href="@{/admin/users(page=${page + 1}, q=${q})}">Next</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>
