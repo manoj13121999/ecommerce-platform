@@ -171,6 +171,26 @@
   font-weight: 600;
 }
 
+.account-orders .order-status-paid {
+  color: var(--color-success);
+}
+
+.account-orders .order-status-pending {
+  color: var(--color-brand);
+}
+
+.account-orders .order-status-shipped {
+  color: #2563eb;
+}
+
+.account-orders .order-status-delivered {
+  color: var(--color-success);
+}
+
+.account-orders .order-status-cancelled {
+  color: var(--color-danger);
+}
+
 .account-product-grid {
   margin-top: 0.5rem;
 }
