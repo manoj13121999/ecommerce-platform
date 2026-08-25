@@ -1,16 +1,11 @@
 import { Link, Navigate, useParams } from 'react-router-dom';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Package, Truck } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { orderApi, paymentApi } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { formatPrice } from '../utils/formatPrice';
+import { orderStatusClass, orderStatusLabel, orderTrackingSteps } from '../utils/orderStatus';
 import './OrderPage.css';
-
-function statusLabel(status) {
-  if (status === 'PAID') return 'Paid';
-  if (status === 'PLACED') return 'Payment pending';
-  return status;
-}
 
 export default function OrderPage() {
   const { id } = useParams();
@@ -103,15 +98,51 @@ export default function OrderPage() {
     );
   }
 
-  const isPaid = order.status === 'PAID';
+  const isPaid = order.status === 'PAID' || order.status === 'SHIPPED' || order.status === 'DELIVERED';
+  const isCancelled = order.status === 'CANCELLED';
+  const trackingSteps = orderTrackingSteps(order.status);
+  const statusClass = orderStatusClass(order.status);
+
+  let heroTitle = 'Order received';
+  let heroIcon = Package;
+  if (order.status === 'PAID') {
+    heroTitle = 'Thank you for your order';
+    heroIcon = CheckCircle2;
+  } else if (order.status === 'SHIPPED') {
+    heroTitle = 'Your order is on the way';
+    heroIcon = Truck;
+  } else if (order.status === 'DELIVERED') {
+    heroTitle = 'Order delivered';
+    heroIcon = CheckCircle2;
+  } else if (isCancelled) {
+    heroTitle = 'Order cancelled';
+    heroIcon = Package;
+  }
+
+  const HeroIcon = heroIcon;
 
   return (
     <div className="container order-page">
-      <div className={`order-success${isPaid ? '' : ' order-success-pending'}`}>
-        <CheckCircle2 size={40} />
-        <h1>{isPaid ? 'Thank you for your order' : 'Order received'}</h1>
-        <p>Order #{order.id} · {statusLabel(order.status)}</p>
+      <div className={`order-success${isPaid ? '' : ' order-success-pending'}${isCancelled ? ' order-success-cancelled' : ''}`}>
+        <HeroIcon size={40} />
+        <h1>{heroTitle}</h1>
+        <p>Order #{order.id} · {orderStatusLabel(order.status)}</p>
       </div>
+
+      <section className="order-tracking">
+        <h2>Tracking</h2>
+        <ol className="order-tracking-steps">
+          {trackingSteps.map((step) => (
+            <li
+              key={step.key}
+              className={`order-tracking-step${step.done ? ' done' : ''}${step.active ? ' active' : ''}${step.cancelled ? ' cancelled' : ''}`}
+            >
+              <span className="order-tracking-dot" />
+              <span>{step.label}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
 
       <div className="order-layout">
         <section className="order-panel">
@@ -131,11 +162,14 @@ export default function OrderPage() {
 
         <aside className="order-panel order-summary-panel">
           <h2>Summary</h2>
-          <p><span>Status</span> <strong className={isPaid ? 'order-status-paid' : 'order-status-pending'}>{statusLabel(order.status)}</strong></p>
+          <p>
+            <span>Status</span>
+            <strong className={statusClass}>{orderStatusLabel(order.status)}</strong>
+          </p>
           <p><span>Total</span> <strong>{formatPrice(order.subtotal)}</strong></p>
           <p className="order-address"><span>Ship to</span> {order.shippingAddress}</p>
 
-          {!isPaid && (
+          {order.status === 'PLACED' && (
             <>
               <button type="button" className="btn btn-primary" disabled={paying} onClick={handlePayNow}>
                 {paying ? 'Processing...' : `Pay ${formatPrice(order.subtotal)}`}
@@ -144,7 +178,7 @@ export default function OrderPage() {
             </>
           )}
 
-          {isPaid && (
+          {isPaid && !isCancelled && (
             <Link to="/shop" className="btn btn-primary">Continue shopping</Link>
           )}
           <Link to="/account?tab=orders" className="order-link">View all orders</Link>

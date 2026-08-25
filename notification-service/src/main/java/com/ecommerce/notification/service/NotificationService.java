@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
+
 @Service
 public class NotificationService {
 
@@ -31,6 +33,22 @@ public class NotificationService {
                 orderId,
                 email,
                 paymentReference,
+                frontendBaseUrl,
+                orderId);
+    }
+
+    public void sendOrderStatusEmail(String email, Long orderId, String status) {
+        String label = switch (status) {
+            case "SHIPPED" -> "shipped";
+            case "DELIVERED" -> "delivered";
+            case "CANCELLED" -> "cancelled";
+            default -> status.toLowerCase(Locale.ROOT);
+        };
+        log.info(
+                "[EMAIL] Order #{} {} for {}. Track: {}/orders/{}",
+                orderId,
+                label,
+                email,
                 frontendBaseUrl,
                 orderId);
     }

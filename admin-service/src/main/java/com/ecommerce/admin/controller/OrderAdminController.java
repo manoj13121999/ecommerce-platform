@@ -1,6 +1,7 @@
 package com.ecommerce.admin.controller;
 
 import com.ecommerce.admin.client.OrderAdminClient;
+import com.ecommerce.admin.client.UserAdminClient;
 import com.ecommerce.admin.security.AdminSessionAuthFilter;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
@@ -20,9 +21,11 @@ public class OrderAdminController {
             "PLACED", "PAID", "SHIPPED", "DELIVERED", "CANCELLED");
 
     private final OrderAdminClient orderAdminClient;
+    private final UserAdminClient userAdminClient;
 
-    public OrderAdminController(OrderAdminClient orderAdminClient) {
+    public OrderAdminController(OrderAdminClient orderAdminClient, UserAdminClient userAdminClient) {
         this.orderAdminClient = orderAdminClient;
+        this.userAdminClient = userAdminClient;
     }
 
     @GetMapping("/admin/orders")
@@ -64,7 +67,10 @@ public class OrderAdminController {
             HttpSession session,
             RedirectAttributes redirectAttributes) {
         try {
-            orderAdminClient.updateStatus(accessToken(session), id, status);
+            String token = accessToken(session);
+            var order = orderAdminClient.getOrder(token, id);
+            var user = userAdminClient.getUser(token, order.userId());
+            orderAdminClient.updateStatus(token, id, status, user.email());
             redirectAttributes.addFlashAttribute("message", "Order status updated");
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("error", ex.getMessage());

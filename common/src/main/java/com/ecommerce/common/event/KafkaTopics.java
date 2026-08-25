@@ -8,6 +8,7 @@ public final class KafkaTopics {
     public static final String ORDER_PLACED = "order.placed";
     public static final String PAYMENT_COMPLETED = "payment.completed";
     public static final String ORDER_PAID = "order.paid";
+    public static final String ORDER_STATUS_UPDATED = "order.status.updated";
 
     private KafkaTopics() {
     }

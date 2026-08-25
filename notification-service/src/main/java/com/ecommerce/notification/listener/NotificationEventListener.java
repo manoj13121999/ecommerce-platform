@@ -1,6 +1,7 @@
 package com.ecommerce.notification.listener;
 
 import com.ecommerce.common.event.KafkaTopics;
+import com.ecommerce.common.event.OrderStatusUpdatedEvent;
 import com.ecommerce.common.event.PasswordResetRequestedEvent;
 import com.ecommerce.common.event.PaymentCompletedEvent;
 import com.ecommerce.common.event.UserRegisteredEvent;
@@ -42,5 +43,19 @@ public class NotificationEventListener {
                 event.customerEmail(),
                 event.orderId(),
                 event.paymentReference());
+    }
+
+    @KafkaListener(
+            topics = KafkaTopics.ORDER_STATUS_UPDATED,
+            groupId = "notification-service",
+            containerFactory = "orderStatusUpdatedKafkaListenerContainerFactory")
+    public void onOrderStatusUpdated(OrderStatusUpdatedEvent event) {
+        if (event.customerEmail() == null || event.customerEmail().isBlank()) {
+            return;
+        }
+        notificationService.sendOrderStatusEmail(
+                event.customerEmail(),
+                event.orderId(),
+                event.newStatus());
     }
 }

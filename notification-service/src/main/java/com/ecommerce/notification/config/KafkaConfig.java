@@ -1,5 +1,6 @@
 package com.ecommerce.notification.config;
 
+import com.ecommerce.common.event.OrderStatusUpdatedEvent;
 import com.ecommerce.common.event.PasswordResetRequestedEvent;
 import com.ecommerce.common.event.PaymentCompletedEvent;
 import com.ecommerce.common.event.UserRegisteredEvent;
@@ -74,6 +75,21 @@ public class KafkaConfig {
         ConcurrentKafkaListenerContainerFactory<String, PaymentCompletedEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(paymentCompletedConsumerFactory());
+        return factory;
+    }
+
+    @Bean
+    ConsumerFactory<String, OrderStatusUpdatedEvent> orderStatusUpdatedConsumerFactory() {
+        Map<String, Object> config = new HashMap<>(baseConsumerConfig());
+        config.put(JsonDeserializer.VALUE_DEFAULT_TYPE, OrderStatusUpdatedEvent.class.getName());
+        return new DefaultKafkaConsumerFactory<>(config);
+    }
+
+    @Bean
+    ConcurrentKafkaListenerContainerFactory<String, OrderStatusUpdatedEvent> orderStatusUpdatedKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, OrderStatusUpdatedEvent> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(orderStatusUpdatedConsumerFactory());
         return factory;
     }
 }

@@ -41,12 +41,14 @@ public class OrderAdminClient {
                 .body(OrderDetailResponse.class);
     }
 
-    public OrderDetailResponse updateStatus(String token, Long id, String status) {
+    public OrderDetailResponse updateStatus(String token, Long id, String status, String customerEmail) {
         return restClient.put()
                 .uri("/api/admin/orders/{id}/status", id)
                 .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(Map.of("status", status))
+                .body(Map.of(
+                        "status", status,
+                        "customerEmail", customerEmail == null ? "" : customerEmail))
                 .retrieve()
                 .body(OrderDetailResponse.class);
     }
