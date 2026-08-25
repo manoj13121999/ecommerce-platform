@@ -357,6 +357,15 @@
   color: #fff;
 }
 
+.shopvault-admin-link {
+  color: #c2410c;
+  font-weight: 600;
+}
+
+.admin-console-link {
+  white-space: nowrap;
+}
+
 .home-style-shopvault {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', sans-serif;
 }

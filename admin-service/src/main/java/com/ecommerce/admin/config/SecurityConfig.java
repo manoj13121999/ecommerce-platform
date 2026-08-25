@@ -25,6 +25,11 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/health", "/admin/login").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll())
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendRedirect("/admin/login"))
+                        .accessDeniedHandler((request, response, accessDeniedException) ->
+                                response.sendRedirect("/admin/login?error=Admin+access+required")))
                 .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())

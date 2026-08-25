@@ -115,20 +115,20 @@ public class ProductAdminController {
 
     private Map<String, Object> toPayload(ProductForm form, boolean create) {
         Map<String, Object> payload = new HashMap<>();
-        payload.put("categoryId", form.categoryId());
-        payload.put("name", form.name());
-        if (form.slug() != null && !form.slug().isBlank()) {
-            payload.put("slug", form.slug());
+        payload.put("categoryId", form.getCategoryId());
+        payload.put("name", form.getName());
+        if (form.getSlug() != null && !form.getSlug().isBlank()) {
+            payload.put("slug", form.getSlug());
         }
-        payload.put("description", form.description());
-        payload.put("price", form.price() == null ? BigDecimal.ZERO : form.price());
-        payload.put("compareAtPrice", form.compareAtPrice());
-        payload.put("stock", form.stock() == null ? 0 : form.stock());
-        payload.put("imageUrl", form.imageUrl());
+        payload.put("description", form.getDescription());
+        payload.put("price", form.getPrice() == null ? BigDecimal.ZERO : form.getPrice());
+        payload.put("compareAtPrice", form.getCompareAtPrice());
+        payload.put("stock", form.getStock() == null ? 0 : form.getStock());
+        payload.put("imageUrl", form.getImageUrl());
         if (create) {
-            payload.put("active", form.active() == null || form.active());
+            payload.put("active", form.getActive() == null || form.getActive());
         } else {
-            payload.put("active", form.active() != null && form.active());
+            payload.put("active", form.getActive() != null && form.getActive());
         }
         return payload;
     }

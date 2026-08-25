@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { ADMIN_PORTAL_URL, isAdminUser } from '../utils/adminPortal';
 import './Header.css';
 
 const STORE_NAV = [
@@ -34,6 +35,8 @@ export default function Header() {
   const initials = user
     ? `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase()
     : '';
+
+  const isAdmin = isAdminUser(user);
 
   function handleSearchSubmit(event) {
     event.preventDefault();
@@ -69,7 +72,12 @@ export default function Header() {
               </>
             )}
             {mobileOpen && !loading && isAuthenticated && (
-              <Link to="/account" onClick={() => setMobileOpen(false)}>Account</Link>
+              <>
+                <Link to="/account" onClick={() => setMobileOpen(false)}>Account</Link>
+                {isAdmin && (
+                  <a href={ADMIN_PORTAL_URL} onClick={() => setMobileOpen(false)}>Admin console</a>
+                )}
+              </>
             )}
           </nav>
         ) : (
@@ -120,9 +128,16 @@ export default function Header() {
           </Link>
 
           {isHome && !loading && isAuthenticated && (
-            <Link to="/account" className="shopvault-auth-link" onClick={() => setMobileOpen(false)}>
-              Account
-            </Link>
+            <>
+              {isAdmin && (
+                <a href={ADMIN_PORTAL_URL} className="shopvault-auth-link shopvault-admin-link">
+                  Admin
+                </a>
+              )}
+              <Link to="/account" className="shopvault-auth-link" onClick={() => setMobileOpen(false)}>
+                Account
+              </Link>
+            </>
           )}
 
           {isHome && !loading && !isAuthenticated && (
@@ -137,13 +152,20 @@ export default function Header() {
           )}
 
           {!isHome && !loading && isAuthenticated ? (
-            <Link to="/account" className="user-menu" onClick={() => setMobileOpen(false)}>
+            <>
+              {isAdmin && (
+                <a href={ADMIN_PORTAL_URL} className="btn btn-ghost btn-sm admin-console-link">
+                  Admin console
+                </a>
+              )}
+              <Link to="/account" className="user-menu" onClick={() => setMobileOpen(false)}>
               <div className="user-avatar">{initials}</div>
               <div className="user-meta">
                 <span className="user-name">{user.firstName}</span>
                 <span className="user-email">{user.email}</span>
               </div>
             </Link>
+            </>
           ) : (
             !isHome && !loading && (
               <div className="auth-links">

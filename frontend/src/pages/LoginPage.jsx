@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { isAdminUser } from '../utils/adminPortal';
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated, loading, user } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -17,13 +18,17 @@ export default function LoginPage() {
     setSubmitting(true);
 
     try {
-      await login({ email, password });
-      navigate('/');
+      const response = await login({ email, password });
+      navigate(isAdminUser(response.user) ? '/account' : '/');
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Sign in failed. Check your email and password.');
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (!loading && isAuthenticated) {
+    return <Navigate to="/account" replace />;
   }
 
   return (
@@ -85,6 +90,11 @@ export default function LoginPage() {
               </div>
               <div className="form-footer">
                 <Link to="/forgot-password">Forgot password?</Link>
+              </div>
+              <div className="form-footer auth-admin-note">
+                Store admin? Use the{' '}
+                <a href="http://localhost:8087/admin/login">admin console login</a>
+                {' '}(port 8087) — separate from customer sign-in here.
               </div>
           </div>
         </div>

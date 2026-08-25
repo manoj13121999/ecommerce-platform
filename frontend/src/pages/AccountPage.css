@@ -34,6 +34,50 @@
   font-weight: 700;
 }
 
+.account-role-admin {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.account-admin-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid #fdba74;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #fff7ed 0%, #fff 100%);
+}
+
+.account-admin-banner h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.1rem;
+}
+
+.account-admin-banner p {
+  margin: 0;
+  color: var(--color-text-muted);
+  max-width: 38rem;
+}
+
+.account-tab-link {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: var(--radius-sm);
+  background: #fff7ed;
+  color: #c2410c;
+  font-weight: 700;
+}
+
+.account-tab-link:hover {
+  background: #ffedd5;
+  color: #9a3412;
+}
+
 .account-layout {
   display: grid;
   grid-template-columns: 220px 1fr;
@@ -120,6 +164,11 @@
 .account-orders span {
   color: var(--color-text-muted);
   font-size: 0.88rem;
+}
+
+.account-orders .order-status-badge {
+  font-size: 0.82rem;
+  font-weight: 600;
 }
 
 .account-product-grid {

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useSearchParams } from 'react-router-dom';
-import { Heart, Lock, Package, UserRound } from 'lucide-react';
+import { Heart, Lock, Package, Settings, UserRound } from 'lucide-react';
 import { authApi, catalogApi, orderApi } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useWishlist } from '../context/WishlistContext';
+import { ADMIN_PORTAL_URL, isAdminUser } from '../utils/adminPortal';
 import ProductCard from '../components/ProductCard';
 import ProductCardSkeleton from '../components/ProductCardSkeleton';
+import { orderStatusClass, orderStatusLabel } from '../utils/orderStatus';
 import './AccountPage.css';
 
 export default function AccountPage() {
@@ -73,6 +75,8 @@ export default function AccountPage() {
     return <Navigate to="/login" replace />;
   }
 
+  const adminUser = isAdminUser(user);
+
   async function handleProfileSubmit(event) {
     event.preventDefault();
     setProfileError('');
@@ -112,14 +116,35 @@ export default function AccountPage() {
       <div className="container">
         <div className="account-header">
           <div>
-            <h1>My account</h1>
+            <h1>{adminUser ? 'Admin account' : 'My account'}</h1>
             <p>{user.email}</p>
           </div>
-          <span className="account-role">{user.role}</span>
+          <span className={`account-role${adminUser ? ' account-role-admin' : ''}`}>{user.role}</span>
         </div>
+
+        {adminUser && (
+          <section className="account-admin-banner">
+            <div>
+              <h2>Store management</h2>
+              <p>
+                This page is for your shopper profile. The admin console uses a separate
+                sign-in at port 8087 to manage products, orders, and users.
+              </p>
+            </div>
+            <a href={ADMIN_PORTAL_URL} className="btn btn-primary">
+              Open admin console
+            </a>
+          </section>
+        )}
 
         <div className="account-layout">
           <aside className="account-tabs">
+            {adminUser && (
+              <a href={ADMIN_PORTAL_URL} className="account-tab-link">
+                <Settings size={18} />
+                Admin console
+              </a>
+            )}
             <button
               type="button"
               className={activeTab === 'profile' ? 'active' : ''}
@@ -252,7 +277,12 @@ export default function AccountPage() {
                       <li key={order.id}>
                         <div>
                           <Link to={`/orders/${order.id}`}>Order #{order.id}</Link>
-                          <span>{order.status} · {order.itemCount} items</span>
+                          <span>
+                            <span className={`order-status-badge ${orderStatusClass(order.status)}`}>
+                              {orderStatusLabel(order.status)}
+                            </span>
+                            {' · '}{order.itemCount} items
+                          </span>
                         </div>
                         <strong>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(order.subtotal)}</strong>
                       </li>
