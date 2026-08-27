@@ -1,6 +1,7 @@
 package com.ecommerce.order.controller;
 
 import com.ecommerce.order.dto.AdminOrderPageResponse;
+import com.ecommerce.order.dto.AdminOrderStatsResponse;
 import com.ecommerce.order.dto.OrderResponse;
 import com.ecommerce.order.dto.UpdateOrderStatusRequest;
 import com.ecommerce.order.service.OrderAdminService;
@@ -29,6 +30,11 @@ public class AdminOrderController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return orderAdminService.listOrders(status, page, size);
+    }
+
+    @GetMapping("/stats")
+    public AdminOrderStatsResponse getStats() {
+        return orderAdminService.getStats();
     }
 
     @GetMapping("/{orderId}")

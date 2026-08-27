@@ -3,6 +3,7 @@ package com.ecommerce.admin.client;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -64,6 +65,14 @@ public class AdminApiModels {
             int size,
             long totalElements,
             int totalPages
+    ) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record AdminOrderStatsResponse(
+            long totalOrders,
+            Map<String, Long> ordersByStatus,
+            BigDecimal totalRevenue
     ) {
     }
 

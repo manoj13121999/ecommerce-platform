@@ -3,6 +3,7 @@ package com.ecommerce.order.service;
 import com.ecommerce.common.event.KafkaTopics;
 import com.ecommerce.common.event.OrderStatusUpdatedEvent;
 import com.ecommerce.order.dto.AdminOrderPageResponse;
+import com.ecommerce.order.dto.AdminOrderStatsResponse;
 import com.ecommerce.order.dto.AdminOrderSummaryResponse;
 import com.ecommerce.order.dto.OrderItemResponse;
 import com.ecommerce.order.dto.OrderResponse;
@@ -12,8 +13,10 @@ import com.ecommerce.order.entity.OrderItem;
 import com.ecommerce.order.repository.OrderRepository;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
@@ -62,6 +65,26 @@ public class OrderAdminService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
         return toResponse(order);
+    }
+
+    @Transactional(readOnly = true)
+    public AdminOrderStatsResponse getStats() {
+        Map<String, Long> ordersByStatus = new LinkedHashMap<>();
+        for (String status : ALLOWED_STATUSES) {
+            ordersByStatus.put(status, 0L);
+        }
+
+        for (Object[] row : orderRepository.countGroupedByStatus()) {
+            ordersByStatus.put((String) row[0], (Long) row[1]);
+        }
+
+        BigDecimal revenue = orderRepository.sumSubtotalByStatusIn(
+                List.of("PAID", "SHIPPED", "DELIVERED"));
+        if (revenue == null) {
+            revenue = BigDecimal.ZERO;
+        }
+
+        return new AdminOrderStatsResponse(orderRepository.count(), ordersByStatus, revenue);
     }
 
     @Transactional

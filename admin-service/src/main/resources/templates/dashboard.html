@@ -5,14 +5,100 @@
 <div th:replace="~{fragments :: header}"></div>
 <main class="admin-main">
     <div th:replace="~{fragments :: flashes}"></div>
+
+    <div class="dashboard-header">
+        <div>
+            <h1 th:text="${title}">ShopVault Admin</h1>
+            <p class="muted">Operations overview</p>
+        </div>
+        <div class="dashboard-actions">
+            <a class="btn btn-primary" th:href="@{/admin/orders(status='PAID')}" th:if="${readyToShip > 0}"
+               th:text="${readyToShip} + ' to ship'">0 to ship</a>
+            <a class="btn" th:href="@{/admin/products}">Products</a>
+            <a class="btn" th:href="@{/admin/orders}">Orders</a>
+            <a class="btn" th:href="@{/admin/users}">Users</a>
+        </div>
+    </div>
+
+    <div class="stat-grid">
+        <div class="stat-card">
+            <span class="stat-label">Revenue</span>
+            <strong class="stat-value"
+                    th:text="'₹' + ${#numbers.formatDecimal(stats.totalRevenue, 1, 'COMMA', 0, 'POINT')}">₹0</strong>
+            <span class="stat-hint">Paid, shipped, and delivered</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Orders</span>
+            <strong class="stat-value" th:text="${stats.totalOrders}">0</strong>
+            <span class="stat-hint">All time</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Products</span>
+            <strong class="stat-value" th:text="${totalProducts}">0</strong>
+            <span class="stat-hint">Active catalog</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Customers</span>
+            <strong class="stat-value" th:text="${totalUsers}">0</strong>
+            <span class="stat-hint">Registered users</span>
+        </div>
+    </div>
+
+    <div class="card dashboard-pipeline">
+        <h2>Order pipeline</h2>
+        <div class="pipeline-grid">
+            <a class="pipeline-item" th:each="entry : ${stats.ordersByStatus}"
+               th:href="@{/admin/orders(status=${entry.key})}">
+                <span class="badge" th:classappend="' badge-' + ${#strings.toLowerCase(entry.key)}"
+                      th:text="${entry.key}">PAID</span>
+                <strong th:text="${entry.value}">0</strong>
+            </a>
+        </div>
+        <p class="muted pipeline-note" th:if="${awaitingPayment > 0}"
+           th:text="${awaitingPayment} + ' orders awaiting customer payment.'">0 awaiting payment</p>
+        <p class="muted pipeline-note" th:if="${inTransit > 0}"
+           th:text="${inTransit} + ' orders currently in transit.'">0 in transit</p>
+    </div>
+
     <div class="card">
-        <h1 th:text="${title}">ShopVault Admin</h1>
-        <p class="muted">Order fulfillment and customer tracking</p>
-        <ul>
-            <li><a th:href="@{/admin/products}">Manage products</a></li>
-            <li><a th:href="@{/admin/orders}">Manage orders</a></li>
-            <li><a th:href="@{/admin/users}">Manage users</a></li>
-        </ul>
+        <div class="toolbar">
+            <div>
+                <h2 style="margin:0">Recent orders</h2>
+                <p class="muted" style="margin:0.25rem 0 0">Latest activity across the store</p>
+            </div>
+            <a class="btn" th:href="@{/admin/orders}">View all</a>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Order</th>
+                <th>Customer</th>
+                <th>Status</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Placed</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(recentOrders)}">
+                <td colspan="7" class="muted">No orders yet.</td>
+            </tr>
+            <tr th:each="order : ${recentOrders}">
+                <td th:text="'#' + ${order.id}">#1</td>
+                <td th:text="'User ' + ${order.userId}">User 1</td>
+                <td>
+                    <span class="badge" th:classappend="' badge-' + ${#strings.toLowerCase(order.status)}"
+                          th:text="${order.status}">PAID</span>
+                </td>
+                <td th:text="${order.itemCount}">0</td>
+                <td th:text="'₹' + ${#numbers.formatDecimal(order.subtotal, 1, 'COMMA', 0, 'POINT')}">₹0</td>
+                <td th:text="${#strings.substring(order.createdAt, 0, 16)}">2026-01-01</td>
+                <td><a class="btn" th:href="@{/admin/orders/{id}(id=${order.id})}">View</a></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </main>
 </body>

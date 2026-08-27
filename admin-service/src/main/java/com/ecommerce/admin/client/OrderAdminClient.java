@@ -1,6 +1,7 @@
 package com.ecommerce.admin.client;
 
 import com.ecommerce.admin.client.AdminApiModels.AdminOrderPageResponse;
+import com.ecommerce.admin.client.AdminApiModels.AdminOrderStatsResponse;
 import com.ecommerce.admin.client.AdminApiModels.OrderDetailResponse;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +32,14 @@ public class OrderAdminClient {
                 .header("Authorization", "Bearer " + token)
                 .retrieve()
                 .body(AdminOrderPageResponse.class);
+    }
+
+    public AdminOrderStatsResponse getStats(String token) {
+        return restClient.get()
+                .uri("/api/admin/orders/stats")
+                .header("Authorization", "Bearer " + token)
+                .retrieve()
+                .body(AdminOrderStatsResponse.class);
     }
 
     public OrderDetailResponse getOrder(String token, Long id) {
