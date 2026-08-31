@@ -105,6 +105,9 @@ public class OrderAdminService {
         Order saved = orderRepository.save(order);
 
         if (NOTIFY_STATUSES.contains(status)) {
+            List<OrderStatusUpdatedEvent.StatusLineItem> items = saved.getItems().stream()
+                    .map(item -> new OrderStatusUpdatedEvent.StatusLineItem(item.getProductId(), item.getQuantity()))
+                    .toList();
             kafkaTemplate.send(
                     KafkaTopics.ORDER_STATUS_UPDATED,
                     saved.getId().toString(),
@@ -115,7 +118,8 @@ public class OrderAdminService {
                             request.customerEmail(),
                             previousStatus,
                             status,
-                            Instant.now()));
+                            Instant.now(),
+                            items));
         }
 
         return toResponse(saved);

@@ -1,5 +1,6 @@
 package com.ecommerce.order.controller;
 
+import com.ecommerce.order.dto.CancelOrderRequest;
 import com.ecommerce.order.dto.OrderResponse;
 import com.ecommerce.order.dto.OrderSummaryResponse;
 import com.ecommerce.order.dto.PlaceOrderRequest;
@@ -37,6 +38,14 @@ public class OrderController {
     @GetMapping("/{orderId}")
     public OrderResponse getOrder(Authentication authentication, @PathVariable Long orderId) {
         return orderService.getOrder(getUserId(authentication), orderId);
+    }
+
+    @PostMapping("/{orderId}/cancel")
+    public OrderResponse cancelOrder(
+            Authentication authentication,
+            @PathVariable Long orderId,
+            @RequestBody(required = false) CancelOrderRequest request) {
+        return orderService.cancelOrder(getUserId(authentication), orderId, request);
     }
 
     private Long getUserId(Authentication authentication) {

@@ -1,6 +1,7 @@
 package com.ecommerce.catalog.config;
 
 import com.ecommerce.common.event.OrderPaidEvent;
+import com.ecommerce.common.event.OrderStatusUpdatedEvent;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -37,6 +38,27 @@ public class KafkaConfig {
         ConcurrentKafkaListenerContainerFactory<String, OrderPaidEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(orderPaidConsumerFactory());
+        return factory;
+    }
+
+    @Bean
+    ConsumerFactory<String, OrderStatusUpdatedEvent> orderStatusUpdatedConsumerFactory() {
+        Map<String, Object> config = new HashMap<>();
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, "catalog-service");
+        config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        config.put(JsonDeserializer.TRUSTED_PACKAGES, "com.ecommerce.common.event");
+        config.put(JsonDeserializer.VALUE_DEFAULT_TYPE, OrderStatusUpdatedEvent.class.getName());
+        return new DefaultKafkaConsumerFactory<>(config);
+    }
+
+    @Bean
+    ConcurrentKafkaListenerContainerFactory<String, OrderStatusUpdatedEvent> orderStatusUpdatedKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, OrderStatusUpdatedEvent> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(orderStatusUpdatedConsumerFactory());
         return factory;
     }
 }

@@ -3,6 +3,8 @@ package com.ecommerce.catalog.service;
 import com.ecommerce.catalog.entity.Product;
 import com.ecommerce.catalog.repository.ProductRepository;
 import com.ecommerce.common.event.OrderPaidEvent;
+import com.ecommerce.common.event.OrderStatusUpdatedEvent;
+import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,29 @@ public class InventoryService {
             }
 
             product.setStock(Math.max(0, product.getStock() - item.quantity()));
+            productRepository.save(product);
+            productIndexService.indexProduct(product);
+        }
+    }
+
+    @Transactional
+    public void restoreIfCancelled(OrderStatusUpdatedEvent event) {
+        if (!"CANCELLED".equals(event.newStatus())) {
+            return;
+        }
+        if (!Set.of("PAID", "SHIPPED").contains(event.previousStatus())) {
+            return;
+        }
+        if (event.items() == null) {
+            return;
+        }
+
+        for (OrderStatusUpdatedEvent.StatusLineItem item : event.items()) {
+            Product product = productRepository.findById(item.productId()).orElse(null);
+            if (product == null) {
+                continue;
+            }
+            product.setStock(product.getStock() + item.quantity());
             productRepository.save(product);
             productIndexService.indexProduct(product);
         }

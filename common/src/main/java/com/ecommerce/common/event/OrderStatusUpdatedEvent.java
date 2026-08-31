@@ -1,6 +1,7 @@
 package com.ecommerce.common.event;
 
 import java.time.Instant;
+import java.util.List;
 
 public record OrderStatusUpdatedEvent(
         String eventId,
@@ -9,6 +10,9 @@ public record OrderStatusUpdatedEvent(
         String customerEmail,
         String previousStatus,
         String newStatus,
-        Instant occurredAt
+        Instant occurredAt,
+        List<StatusLineItem> items
 ) {
+    public record StatusLineItem(Long productId, int quantity) {
+    }
 }
