@@ -72,8 +72,9 @@ Open http://localhost:5173
 ## Features
 
 - Product catalog with search, categories, and deals
-- Cart, checkout, and order placement
+- Cart, checkout, and order placement with live stock checks
 - Order status tracking (placed → paid → shipped → delivered)
+- Customer cancel for placed/paid orders (restores inventory after payment)
 - Admin: product CRUD, order fulfillment, user list, operations dashboard
 - Kafka events for order status updates and notification emails (logged in dev)
 
@@ -95,3 +96,4 @@ Open http://localhost:5173
 - Admin/storefront login separation
 - Order fulfillment tracking with status timeline
 - Admin dashboard with revenue, pipeline stats, and recent orders
+- Checkout uses catalog prices and stock; cancelled paid orders restore stock
