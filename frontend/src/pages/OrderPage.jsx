@@ -15,6 +15,8 @@ export default function OrderPage() {
   const [error, setError] = useState('');
   const [paying, setPaying] = useState(false);
   const [payError, setPayError] = useState('');
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState('');
 
   const loadOrder = useCallback(async () => {
     const data = await orderApi.getOrder(id);
@@ -74,6 +76,21 @@ export default function OrderPage() {
       setPayError(err.message || 'Payment failed');
     } finally {
       setPaying(false);
+    }
+  }
+
+  async function handleCancel() {
+    if (!order || !user) return;
+    if (!window.confirm('Cancel this order?')) return;
+    setCancelling(true);
+    setCancelError('');
+    try {
+      const updated = await orderApi.cancelOrder(order.id, user.email);
+      setOrder(updated);
+    } catch (err) {
+      setCancelError(err.message || 'Could not cancel order');
+    } finally {
+      setCancelling(false);
     }
   }
 
@@ -171,10 +188,24 @@ export default function OrderPage() {
 
           {order.status === 'PLACED' && (
             <>
-              <button type="button" className="btn btn-primary" disabled={paying} onClick={handlePayNow}>
+              <button type="button" className="btn btn-primary" disabled={paying || cancelling} onClick={handlePayNow}>
                 {paying ? 'Processing...' : `Pay ${formatPrice(order.subtotal)}`}
               </button>
               {payError && <p className="order-pay-error">{payError}</p>}
+            </>
+          )}
+
+          {(order.status === 'PLACED' || order.status === 'PAID') && (
+            <>
+              <button
+                type="button"
+                className="btn order-cancel-btn"
+                disabled={cancelling || paying}
+                onClick={handleCancel}
+              >
+                {cancelling ? 'Cancelling...' : 'Cancel order'}
+              </button>
+              {cancelError && <p className="order-pay-error">{cancelError}</p>}
             </>
           )}
 
