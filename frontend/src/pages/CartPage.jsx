@@ -1,13 +1,14 @@
 import { Link, Navigate } from 'react-router-dom';
 import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { catalogApi } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { formatPrice } from '../utils/formatPrice';
 import { productImageFallback } from '../utils/productImages';
 import './CartPage.css';
 
-function CartLineItem({ item, onUpdate, onRemove, busy }) {
+function CartLineItem({ item, warning, onUpdate, onRemove, busy }) {
   const fallback = productImageFallback(null, null);
   const [imageSrc, setImageSrc] = useState(item.imageUrl || fallback);
 
@@ -25,6 +26,7 @@ function CartLineItem({ item, onUpdate, onRemove, busy }) {
           {item.productName}
         </Link>
         <p className="cart-line-price">{formatPrice(item.price)}</p>
+        {warning && <p className="cart-line-warning">{warning}</p>}
         <div className="cart-line-actions">
           <div className="qty-control">
             <button
@@ -65,6 +67,57 @@ export default function CartPage() {
   const { isAuthenticated, loading: authLoading } = useAuth();
   const { cart, loading, updateQuantity, removeItem } = useCart();
   const [busyId, setBusyId] = useState(null);
+  const [liveProducts, setLiveProducts] = useState(null);
+
+  useEffect(() => {
+    if (cart.items.length === 0) {
+      setLiveProducts({});
+      return;
+    }
+    let cancelled = false;
+    catalogApi.getProductsByIds(cart.items.map((item) => item.productId))
+      .then((products) => {
+        if (cancelled) return;
+        const next = {};
+        products.forEach((product) => {
+          next[product.id] = product;
+        });
+        setLiveProducts(next);
+      })
+      .catch(() => {
+        if (!cancelled) setLiveProducts(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [cart.items]);
+
+  const warnings = useMemo(() => {
+    const next = {};
+    if (!liveProducts) {
+      return next;
+    }
+    cart.items.forEach((item) => {
+      const product = liveProducts[item.productId];
+      if (!product) {
+        next[item.productId] = 'This product may no longer be available.';
+        return;
+      }
+      if (product.stock === 0) {
+        next[item.productId] = 'Out of stock. Remove this item to continue.';
+      } else if (item.quantity > product.stock) {
+        next[item.productId] = `Only ${product.stock} left. Reduce quantity to check out.`;
+      } else if (Number(product.price) !== Number(item.price)) {
+        next[item.productId] = `Price is now ${formatPrice(product.price)} and will be applied at checkout.`;
+      }
+    });
+    return next;
+  }, [cart.items, liveProducts]);
+
+  const checkoutBlocked = liveProducts != null && cart.items.some((item) => {
+    const product = liveProducts[item.productId];
+    return !product || product.stock === 0 || item.quantity > product.stock;
+  });
 
   if (authLoading) {
     return <div className="container cart-page"><p className="cart-state">Loading...</p></div>;
@@ -113,6 +166,7 @@ export default function CartPage() {
               <CartLineItem
                 key={item.productId}
                 item={item}
+                warning={warnings[item.productId]}
                 busy={busyId === item.productId}
                 onUpdate={handleUpdate}
                 onRemove={handleRemove}
@@ -127,9 +181,13 @@ export default function CartPage() {
               <strong>{formatPrice(cart.subtotal)}</strong>
             </div>
             <p className="cart-summary-note">Shipping and taxes calculated at checkout.</p>
-            <Link to="/checkout" className="btn btn-primary btn-lg cart-checkout-btn">
-              Check out
-            </Link>
+            {checkoutBlocked ? (
+              <p className="cart-checkout-blocked">Fix stock issues before checkout.</p>
+            ) : (
+              <Link to="/checkout" className="btn btn-primary btn-lg cart-checkout-btn">
+                Check out
+              </Link>
+            )}
             <Link to="/shop" className="cart-continue-link">Continue shopping</Link>
           </aside>
         </div>

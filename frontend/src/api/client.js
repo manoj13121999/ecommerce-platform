@@ -79,6 +79,10 @@ export const catalogApi = {
   getProductsByIds: (ids) => request(`/products/by-ids?ids=${ids.join(',')}`),
   getProduct: (id) => request(`/products/${id}`),
   getRelatedProducts: (id, limit = 4) => request(`/products/${id}/related?limit=${limit}`),
+  validateItems: (items) => request('/products/validate', {
+    method: 'POST',
+    body: JSON.stringify({ items }),
+  }),
 };
 
 export const cartApi = {
@@ -96,6 +100,10 @@ export const orderApi = {
   placeOrder: (body) => request('/orders', { method: 'POST', body: JSON.stringify(body) }),
   listOrders: () => request('/orders'),
   getOrder: (orderId) => request(`/orders/${orderId}`),
+  cancelOrder: (orderId, customerEmail) => request(`/orders/${orderId}/cancel`, {
+    method: 'POST',
+    body: JSON.stringify({ customerEmail }),
+  }),
 };
 
 export const paymentApi = {
