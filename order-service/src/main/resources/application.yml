@@ -20,6 +20,8 @@ spring:
 app:
   jwt:
     secret: ${JWT_SECRET:change-me-to-a-256-bit-secret-key-for-local-dev-only!!}
+  catalog:
+    base-url: ${CATALOG_BASE_URL:http://127.0.0.1:8082}
 
 management:
   endpoints:

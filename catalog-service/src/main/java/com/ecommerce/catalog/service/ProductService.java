@@ -3,6 +3,8 @@ package com.ecommerce.catalog.service;
 import com.ecommerce.catalog.document.ProductDocument;
 import com.ecommerce.catalog.dto.ProductPageResponse;
 import com.ecommerce.catalog.dto.ProductResponse;
+import com.ecommerce.catalog.dto.ValidateItemsRequest;
+import com.ecommerce.catalog.dto.ValidateItemsResponse;
 import com.ecommerce.catalog.entity.Product;
 import com.ecommerce.catalog.mapper.CatalogMapper;
 import com.ecommerce.catalog.repository.ProductRepository;
@@ -129,5 +131,56 @@ public class ProductService {
                 .toList();
 
         return new ProductPageResponse(content, page, size, totalElements, totalPages);
+    }
+
+    @Transactional(readOnly = true)
+    public ValidateItemsResponse validateItems(ValidateItemsRequest request) {
+        List<ValidateItemsResponse.ValidatedItem> items = request.items().stream()
+                .map(this::validateItem)
+                .toList();
+        boolean valid = items.stream().allMatch(ValidateItemsResponse.ValidatedItem::valid);
+        String message = valid ? null : items.stream()
+                .filter(item -> !item.valid())
+                .map(ValidateItemsResponse.ValidatedItem::message)
+                .findFirst()
+                .orElse("Some items cannot be purchased");
+        return new ValidateItemsResponse(valid, message, items);
+    }
+
+    private ValidateItemsResponse.ValidatedItem validateItem(ValidateItemsRequest.ValidateItemRequest item) {
+        Product product = productRepository.findById(item.productId()).orElse(null);
+        if (product == null || !product.isActive()) {
+            return new ValidateItemsResponse.ValidatedItem(
+                    item.productId(),
+                    null,
+                    null,
+                    null,
+                    item.quantity(),
+                    0,
+                    false,
+                    "Product is no longer available");
+        }
+        if (product.getStock() < item.quantity()) {
+            return new ValidateItemsResponse.ValidatedItem(
+                    product.getId(),
+                    product.getName(),
+                    product.getPrice(),
+                    product.getImageUrl(),
+                    item.quantity(),
+                    product.getStock(),
+                    false,
+                    product.getStock() == 0
+                            ? product.getName() + " is out of stock"
+                            : product.getName() + " has only " + product.getStock() + " left");
+        }
+        return new ValidateItemsResponse.ValidatedItem(
+                product.getId(),
+                product.getName(),
+                product.getPrice(),
+                product.getImageUrl(),
+                item.quantity(),
+                product.getStock(),
+                true,
+                null);
     }
 }
